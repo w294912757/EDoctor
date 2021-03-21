@@ -360,3 +360,10 @@ def add_doctor_method(name, department, sex, age, userId, clinicId, operatorId):
     DoctorLog.objects.create(dataId=latestDoctorId, operationType='add', originData='', resultData=resultData,
                              operatorId=operatorId)
     return JsonResponse({'message': '医生添加成功'})
+
+def delete_doctor_method(id,operatorId):
+    doctor = Doctor.objects.get(id=id)
+    doctor.delete()
+    DoctorLog.objects.create(dataId=id, operationType='delete id:', originData=id, resultData='',
+                             operatorId=operatorId)
+    return JsonResponse({'message': '医生删除成功'})

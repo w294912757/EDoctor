@@ -101,11 +101,7 @@ def add_doctor(request):
 def delete_doctor(request):
     id = request.POST.get('id', '')
     operatorId = request.POST.get('operatorId', '')
-    doctor = Doctor.objects.get(id=id)
-    doctor.delete()
-    DoctorLog.objects.create(dataId=id, operationType='delete id:', originData=id, resultData='',
-                             operatorId=operatorId)
-    return JsonResponse({'message': '医生删除成功'})
+    return delete_doctor_method(id, operatorId)
 
 
 def show_doctor(request):
