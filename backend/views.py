@@ -95,14 +95,7 @@ def add_doctor(request):
     userId = request.POST.get('userId', '')
     clinicId = request.POST.get('clinicId', '')
     operatorId = request.POST.get('operatorId', '')
-    user = User.objects.get(id=userId)
-    clinic = Clinic.objects.get(id=clinicId)
-    Doctor.objects.create(name=name, department=department, sex=sex, age=age, userId=user, clinicId=clinic)
-    latestDoctorId = Doctor.objects.latest('id').id
-    resultData = 'name:' + name + 'department:' + department + ' sex:' + sex + ' age:' + age + ' userId:' + userId + ' clinicId:' + clinicId
-    DoctorLog.objects.create(dataId=latestDoctorId, operationType='add', originData='', resultData=resultData,
-                             operatorId=operatorId)
-    return JsonResponse({'message': '医生添加成功'})
+    return add_doctor_method(name, department, sex, age, userId, clinicId, operatorId)
 
 
 def delete_doctor(request):

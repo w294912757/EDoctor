@@ -349,3 +349,14 @@ def alter_clinic_method(id, name, department, address, phoneNum, userId, operato
                                  resultData=userId,
                                  operatorId=operatorId)
     return JsonResponse({'message': '诊所更改成功'})
+
+
+def add_doctor_method(name, department, sex, age, userId, clinicId, operatorId):
+    user = User.objects.get(id=userId)
+    clinic = Clinic.objects.get(id=clinicId)
+    Doctor.objects.create(name=name, department=department, sex=sex, age=age, userId=user, clinicId=clinic)
+    latestDoctorId = Doctor.objects.latest('id').id
+    resultData = 'name:' + name + 'department:' + department + ' sex:' + sex + ' age:' + age + ' userId:' + userId + ' clinicId:' + clinicId
+    DoctorLog.objects.create(dataId=latestDoctorId, operationType='add', originData='', resultData=resultData,
+                             operatorId=operatorId)
+    return JsonResponse({'message': '医生添加成功'})
