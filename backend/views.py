@@ -21,7 +21,7 @@ def add_user(request):
     usertype = request.POST.get('usertype', '')
     operatorId = request.POST.get('operatorId', '')
     image = request.FILES.get('image')
-    return add_user_method(username, password, usertype, operatorId, image)
+    return add_user_method(username, password, usertype, operatorId, image, request.POST)
 
 
 def delete_user(request):

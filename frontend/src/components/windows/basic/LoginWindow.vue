@@ -1,26 +1,24 @@
 <template>
   <div id="loginwindow">
-    <table>
-      <tr>
-        <td>用户名：</td>
-        <td>
-          <input class="login-input" type="text" v-model="username" placeholder="请输入账号">
-        </td>
-      </tr>
-      <tr>
-        <td>密码：</td>
-        <td>
-          <input lass="login-input" type="password" v-model="password" placeholder="请输入密码">
-        </td>
-      </tr>
-    </table>
-    <br>
-    {{message}}
-    <br>
-    <button @click="login" type="submit">登陆</button>
-    <router-link to="/signupwindow">
-      <button>注册</button>
-    </router-link>
+    <el-form>
+      <el-form-item label="账号："  size="mini" required>
+        <el-input v-model="username" placeholder="请输入账号"></el-input>
+      </el-form-item>
+
+      <el-form-item label="密码："  size="mini" required>
+        <el-input v-model="password" placeholder="请输入密码" show-password></el-input>
+      </el-form-item>
+
+      <br>
+      {{message}}
+      <br>
+      <el-button @click="login" type="button">登陆</el-button>
+      <router-link to="/signupwindow">
+        <el-button>注册</el-button>
+      </router-link>
+
+    </el-form>
+
   </div>
 </template>
 

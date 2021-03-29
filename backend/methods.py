@@ -39,25 +39,30 @@ def login_method(username, password):
             return JsonResponse({'checkCode': '3'})
 
 
-def add_user_method(username, password, usertype, operatorId, image):
+def add_user_method(username, password, usertype, operatorId, image, data):
     try:
         result = User.objects.get(username=username)
     except ObjectDoesNotExist:
-
         User.objects.create(username=username, password=password, usertype=usertype)
         latestUserId = User.objects.latest('id').id
+        latestId = ''
         imagePath = ''
         if (usertype == '1'):
-            imagePath = os.path.join(settings.UPLOAD_FILE, 'clinics', str(latestUserId))
+            add_clinic_method(data.get('name', ''), data.get('department', ''), data.get('address', ''),
+                              data.get('phoneNum', ''), latestUserId, latestUserId)
+            latestId = Clinic.objects.latest('id').id
+            imagePath = os.path.join(settings.UPLOAD_FILE, 'clinics', str(latestId))
         else:
-            imagePath = os.path.join(settings.UPLOAD_FILE, 'doctors', str(latestUserId))
+            add_doctor_method(data.get('name', ''), data.get('department', ''),
+                              data.get('sex', ''), data.get('age', ''), latestUserId)
+            latestId = Doctor.objects.latest('id').id
+            imagePath = os.path.join(settings.UPLOAD_FILE, 'doctors', str(latestId))
         os.makedirs(imagePath)
         imageFilename = os.path.join(imagePath, image.name)
         f = open(imageFilename, 'wb')
         for i in image.chunks():
             f.write(i)
         f.close()
-
         resultData = 'username:' + username + ' password:' + password + ' usertype:' + usertype
         operationType = 'add'
         if operatorId == '':
