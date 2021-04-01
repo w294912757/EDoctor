@@ -44,6 +44,7 @@ class User(models.Model):
     password = models.CharField(max_length=20, blank=False, null=False)
     # 用户类型：未指明0 诊所管理1 医生2 系统管理3
     usertype = models.CharField(max_length=5, blank=False, null=False)
+    authorized = models.BooleanField(default=False)
     createTime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updateTime = models.DateTimeField(auto_now=True, null=True, blank=True)
 

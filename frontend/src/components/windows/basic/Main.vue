@@ -3,10 +3,10 @@
     <el-row gutter="20">
       <el-col :span="4">
         <div id="navigatordiv">
-          <ClinicNavigator v-show="clinicNavigatorShow" ref="clinicnavigator"></ClinicNavigator>
-          <DoctorNavigator v-show="doctorNavigatorShow" ref="doctornavigator"></DoctorNavigator>
-          <RootNavigator v-show="rootNavigatorShow" ref="rootnavigator"></RootNavigator>
-          <VisitorNavigator v-show="visitorNavigatorShow" ref="visitornavigator"></VisitorNavigator>
+          <Clinic v-show="clinicNavigatorShow" ref="clinicnavigator"></Clinic>
+          <Doctor v-show="doctorNavigatorShow" ref="doctornavigator"></Doctor>
+          <Root v-show="rootNavigatorShow" ref="rootnavigator"></Root>
+          <Visitor v-show="visitorNavigatorShow" ref="visitornavigator"></Visitor>
         </div>
       </el-col>
       <el-col :span="20">
@@ -20,15 +20,15 @@
 </template>
 
 <script>
-  import ClinicNavigator from "../../navigators/ClinicNavigator";
-  import DoctorNavigator from "../../navigators/DoctorNavigator";
-  import RootNavigator from "../../navigators/RootNavigator";
-  import VisitorNavigator from "../../navigators/VisitorNavigator";
+  import Clinic from "../../navigators/Clinic";
+  import Doctor from "../../navigators/Doctor";
+  import Root from "../../navigators/Root";
+  import Visitor from "../../navigators/Visitor";
 
 
   export default {
-    name: "MainWindow",
-    components: {VisitorNavigator, RootNavigator, DoctorNavigator, ClinicNavigator},
+    name: "Main",
+    components: {Visitor, Root, Doctor, Clinic},
     data() {
       return {
         title: '',
@@ -75,7 +75,7 @@
       }
     },
     created() {
-      this.$router.push({path: '/defaultwindow'});
+      this.$router.push({path: '/default'});
     }, updated() {
       this.changenavigator();
     }

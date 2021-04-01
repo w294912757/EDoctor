@@ -130,6 +130,6 @@ STATIC_URL = '/static/'
 
 APPEND_SLASH = False
 
-UPLOAD_FILE = os.path.join(BASE_DIR, 'images', 'quualifications')
+UPLOAD_FILE = os.path.join(BASE_DIR, 'images')
 
 

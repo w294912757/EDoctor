@@ -1,5 +1,7 @@
+import json
 import os
 
+from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
@@ -10,23 +12,26 @@ from django.db.models import Q
 
 def login_method(username, password):
     try:
-        result = User.objects.get(username=username)
+        result = User.objects.filter(username=username)
     except ObjectDoesNotExist:
         # 用户不存在
         return JsonResponse({'checkCode': '1'})
     else:
         if password == result.password:
+            # 未被授权
+            if (result.authorized == False):
+                return JsonResponse({'checkCode': '4'})
             # 登陆成功
             operatorId = result.id
             usertype = result.usertype
             # 称呼
             title = ''
             if usertype == '1':
-                title = Clinic.objects.get(userId=operatorId).name
+                title = Clinic.objects.filter(userId=operatorId).name
             elif usertype == '2':
-                title = Doctor.objects.get(userId=operatorId).name
+                title = Doctor.objects.filter(userId=operatorId).name
             elif usertype == '3':
-                title = User.objects.get(id=operatorId).username
+                title = User.objects.filter(id=operatorId).username
             UserLog.objects.create(dataId=operatorId, operationType='login', originData='', resultData='',
                                    operatorId=operatorId)
             rst = {'checkCode': '2', 'title': title}
@@ -39,30 +44,31 @@ def login_method(username, password):
             return JsonResponse({'checkCode': '3'})
 
 
-def add_user_method(username, password, usertype, operatorId, image, data):
+def add_user_method(username, password, usertype, operatorId, qualifications, data):
     try:
-        result = User.objects.get(username=username)
+        result = User.objects.filter(username=username)
     except ObjectDoesNotExist:
         User.objects.create(username=username, password=password, usertype=usertype)
         latestUserId = User.objects.latest('id').id
         latestId = ''
-        imagePath = ''
+        qualificationPath = ''
         if (usertype == '1'):
             add_clinic_method(data.get('name', ''), data.get('department', ''), data.get('address', ''),
                               data.get('phoneNum', ''), latestUserId, latestUserId)
             latestId = Clinic.objects.latest('id').id
-            imagePath = os.path.join(settings.UPLOAD_FILE, 'clinics', str(latestId))
+            qualificationPath = os.path.join(settings.UPLOAD_FILE, 'clinics', 'qualification', str(latestId))
         else:
             add_doctor_method(data.get('name', ''), data.get('department', ''),
                               data.get('sex', ''), data.get('age', ''), latestUserId)
             latestId = Doctor.objects.latest('id').id
-            imagePath = os.path.join(settings.UPLOAD_FILE, 'doctors', str(latestId))
-        os.makedirs(imagePath)
-        imageFilename = os.path.join(imagePath, image.name)
-        f = open(imageFilename, 'wb')
-        for i in image.chunks():
-            f.write(i)
-        f.close()
+            qualificationPath = os.path.join(settings.UPLOAD_FILE, 'doctors', 'qualification', str(latestId))
+        os.makedirs(qualificationPath)
+        for qualification in qualifications:
+            imageFilename = os.path.join(qualificationPath, qualification.name)
+            f = open(imageFilename, 'wb')
+            for i in qualification.chunks():
+                f.write(i)
+            f.close()
         resultData = 'username:' + username + ' password:' + password + ' usertype:' + usertype
         operationType = 'add'
         if operatorId == '':
@@ -71,14 +77,14 @@ def add_user_method(username, password, usertype, operatorId, image, data):
                                resultData=resultData,
                                operatorId=operatorId)
 
-        return JsonResponse({'message': '用户添加成功'})
+        return JsonResponse({'message': '用户添加成功，等待管理员批准'})
 
     else:
         return JsonResponse({'checkCode': '3'})
 
 
 def delete_user_method(id, operatorId):
-    user = User.objects.get(id=id)
+    user = User.objects.filter(id=id)
     user.delete()
     UserLog.objects.create(dataId=id, operationType='delete id:', originData=id, resultData='',
                            operatorId=operatorId)
@@ -94,6 +100,10 @@ def show_user_method():
         user['id'] = i.id
         user['username'] = i.username
         user['password'] = i.password
+        if i.usertype == '1':
+            user['object'] = json.loads(serializers.serialize("json", Clinic.objects.filter(userId=i.id)))
+        elif i.usertype == '2':
+            user['object'] = json.loads(serializers.serialize("json", Doctor.objects.filter(userId=i.id)))
         data.append(user)
     return JsonResponse({'message': '查询成功', 'data': data})
 
@@ -102,7 +112,7 @@ def query_user_method(keyword, searchtype, operatorId):
     data = {}
     if searchtype == 'id':
         try:
-            result = User.objects.get(id=keyword)
+            result = User.objects.filter(id=keyword)
         except ObjectDoesNotExist:
             return JsonResponse({'message': '查询对象结果为空'})
 
@@ -118,7 +128,7 @@ def query_user_method(keyword, searchtype, operatorId):
 
     if searchtype == 'username':
         try:
-            result = User.objects.get(username=keyword)
+            result = User.objects.filter(username=keyword)
         except ObjectDoesNotExist:
             return JsonResponse({'message': '查询对象结果为空'})
 
@@ -134,7 +144,7 @@ def query_user_method(keyword, searchtype, operatorId):
 
 
 def alter_user_method(id, username, password, operatorId):
-    originUser = User.objects.get(id=id)
+    originUser = User.objects.filter(id=id)
     if username != '':
         User.objects.filter(id=id).update(username=username)
         UserLog.objects.create(dataId=id, operationType='alter username', originData=originUser.username,
@@ -149,7 +159,7 @@ def alter_user_method(id, username, password, operatorId):
 
 
 def add_clinic_method(name, department, address, phoneNum, userId, operatorId):
-    user = User.objects.get(id=userId)
+    user = User.objects.filter(id=userId)
     Clinic.objects.create(name=name, address=address, phoneNum=phoneNum, userId=user, department=department)
     latestClinicId = Clinic.objects.latest('id').id
     resultData = 'name:' + name + ' department:' + department + ' address:' + address + ' phoneNum:' + phoneNum
@@ -159,7 +169,7 @@ def add_clinic_method(name, department, address, phoneNum, userId, operatorId):
 
 
 def delete_clinic_method(id, operatorId):
-    clinic = Clinic.objects.get(id=id)
+    clinic = Clinic.objects.filter(id=id)
     clinic.delete()
     ClinicLog.objects.create(dataId=id, operationType='delete id:', originData=id, resultData='',
                              operatorId=operatorId)
@@ -186,7 +196,7 @@ def query_clinic_method(keyword, searchtype, operatorId):
     data = {}
     if searchtype == 'id':
         try:
-            result = Clinic.objects.get(id=keyword)
+            result = Clinic.objects.filter(id=keyword)
         except ObjectDoesNotExist:
             return JsonResponse({'message': '查询对象结果为空'})
 
@@ -327,7 +337,7 @@ def query_clinic_method(keyword, searchtype, operatorId):
 
 
 def alter_clinic_method(id, name, department, address, phoneNum, userId, operatorId):
-    originClinic = Clinic.objects.get(id=id)
+    originClinic = Clinic.objects.filter(id=id)
     if name != '':
         Clinic.objects.filter(id=id).update(name=name)
         ClinicLog.objects.create(dataId=id, operationType='alter name', originData=originClinic.name,
@@ -357,8 +367,8 @@ def alter_clinic_method(id, name, department, address, phoneNum, userId, operato
 
 
 def add_doctor_method(name, department, sex, age, userId, clinicId, operatorId):
-    user = User.objects.get(id=userId)
-    clinic = Clinic.objects.get(id=clinicId)
+    user = User.objects.filter(id=userId)
+    clinic = Clinic.objects.filter(id=clinicId)
     Doctor.objects.create(name=name, department=department, sex=sex, age=age, userId=user, clinicId=clinic)
     latestDoctorId = Doctor.objects.latest('id').id
     resultData = 'name:' + name + 'department:' + department + ' sex:' + sex + ' age:' + age + ' userId:' + userId + ' clinicId:' + clinicId
@@ -368,7 +378,7 @@ def add_doctor_method(name, department, sex, age, userId, clinicId, operatorId):
 
 
 def delete_doctor_method(id, operatorId):
-    doctor = Doctor.objects.get(id=id)
+    doctor = Doctor.objects.filter(id=id)
     doctor.delete()
     DoctorLog.objects.create(dataId=id, operationType='delete id:', originData=id, resultData='',
                              operatorId=operatorId)
@@ -397,7 +407,7 @@ def query_doctor_method(keyword, searchtype, operatorId):
     data = {}
     if searchtype == 'id':
         try:
-            result = Doctor.objects.get(id=keyword)
+            result = Doctor.objects.filter(id=keyword)
         except ObjectDoesNotExist:
             return JsonResponse({'message': '查询对象结果为空'})
 
@@ -554,7 +564,7 @@ def query_doctor_method(keyword, searchtype, operatorId):
 
 
 def alter_doctor_method(id, name, department, sex, age, userId, clinicId, operatorId):
-    originDoctor = Doctor.objects.get(id=id)
+    originDoctor = Doctor.objects.filter(id=id)
     if name != '':
         Doctor.objects.filter(id=id).update(name=name)
         DoctorLog.objects.create(dataId=id, operationType='alter name:', originData=originDoctor.name,
@@ -589,7 +599,7 @@ def alter_doctor_method(id, name, department, sex, age, userId, clinicId, operat
 
 
 def add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId):
-    doctor = Doctor.objects.get(id=doctorId)
+    doctor = Doctor.objects.filter(id=doctorId)
     Prescription.objects.create(patientName=patientName, sex=sex, age=age, phoneNum=phoneNum, diagnosis=diagnosis,
                                 feature=feature, treatment=treatment, doctorId=doctor)
     latestPrescriptionId = Prescription.objects.latest('id').id
@@ -601,7 +611,7 @@ def add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature,
 
 
 def delete_prescription_method(id, operatorId):
-    prescription = Prescription.objects.get(id=id)
+    prescription = Prescription.objects.filter(id=id)
     prescription.delete()
     PrescriptionLog.objects.create(dataId=id, operationType='delete by id', originData=id,
                                    resultData='',
@@ -632,7 +642,7 @@ def query_prescription_method(keyword, searchtype, operatorId):
     data = {}
     if searchtype == 'id':
         try:
-            result = Prescription.objects.get(id=keyword)
+            result = Prescription.objects.filter(id=keyword)
         except ObjectDoesNotExist:
             return JsonResponse({'message': '查询对象结果为空'})
 
@@ -866,7 +876,7 @@ def query_prescription_method(keyword, searchtype, operatorId):
 
 
 def alter_prescription_method(id, patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId):
-    originPrescription = Prescription.objects.get(id=id)
+    originPrescription = Prescription.objects.filter(id=id)
     if patientName != '':
         Prescription.objects.filter(id=id).update(patientName=patientName)
         PrescriptionLog.objects.create(dataId=id, operationType='alter patientName',

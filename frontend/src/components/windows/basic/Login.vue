@@ -13,7 +13,7 @@
       {{message}}
       <br>
       <el-button @click="login" type="button">登陆</el-button>
-      <router-link to="/signupwindow">
+      <router-link to="/signup">
         <el-button>注册</el-button>
       </router-link>
 
@@ -25,7 +25,7 @@
 <script>
 
   export default {
-    name: "LoginWindow",
+    name: "Login",
     data() {
       return {
         username: '',
@@ -52,7 +52,7 @@
             if (checkCode === '2') {
               let title = response.data.title;
               this.$cookies.set('title', title);
-              this.$router.push({path: '/defaultwindow'});
+              this.$router.push({path: '/default'});
             } else if (checkCode === '1') {
               this.message = '该用户不存在，请注册！';
             } else if (checkCode === '3') {

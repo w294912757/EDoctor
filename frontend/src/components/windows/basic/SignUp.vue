@@ -80,7 +80,7 @@
       <br>
     </el-form>
     <el-button @click="signup" type="button">注册</el-button>
-    <router-link to="/loginwindow">
+    <router-link to="/login">
       <el-button>返回登录界面</el-button>
     </router-link>
   </div>
@@ -89,7 +89,7 @@
 
 <script>
   export default {
-    name: "SignUpWindow",
+    name: "SignUp",
     data() {
       return {
         dialogImageUrl: '',
@@ -137,7 +137,7 @@
           data.append('password', this.password);
           data.append('usertype', this.usertype);
           for (let i = 0; i < this.$refs.upload.uploadFiles.length; i++) {
-            data.append('image', this.$refs.upload.uploadFiles[i].raw);
+            data.append('qualifications', this.$refs.upload.uploadFiles[i].raw);
           }
           if (this.clinicSignUpWindow) {
             data.append('name', this.clinicName);
@@ -145,7 +145,10 @@
             data.append('address', this.address);
             data.append('phoneNum', this.phoneNum);
           } else {
-
+            data.append('name', this.doctorName);
+            data.append('department', this.doctorDepartment);
+            data.append('sex', this.sex);
+            data.append('age', this.age);
           }
           this.$axios({
             method: 'post',
@@ -157,7 +160,7 @@
             if (checkCode === '3') {
               this.message = '该用户已存在，请直接登录';
             } else {
-              this.$router.push({path: '/defaultwindow'});
+              this.$router.push({path: '/default'});
             }
           }.bind(this));
 

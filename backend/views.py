@@ -20,8 +20,8 @@ def add_user(request):
     password = request.POST.get('password', '')
     usertype = request.POST.get('usertype', '')
     operatorId = request.POST.get('operatorId', '')
-    image = request.FILES.get('image')
-    return add_user_method(username, password, usertype, operatorId, image, request.POST)
+    qualifications = request.FILES.getlist('qualifications')
+    return add_user_method(username, password, usertype, operatorId, qualifications, request.POST)
 
 
 def delete_user(request):

@@ -1,5 +1,5 @@
 <template>
-  <div id="clinicswindow">
+  <div id="doctormanagewindow">
     <el-table
       :data="tableData"
       stripe
@@ -27,14 +27,14 @@
       </el-table-column>
       <el-table-column
         sortable
-        prop="address"
-        label="地址"
+        prop="sex"
+        label="性别"
         width="180">
       </el-table-column>
       <el-table-column
         sortable
-        prop="phoneNum"
-        label="联系电话"
+        prop="age"
+        label="年龄"
         width="180">
       </el-table-column>
       <el-table-column
@@ -75,10 +75,10 @@
 
 <script>
   export default {
-    name: "ClinicsWindow",
+    name: "DoctorApplyMenu",
     data() {
       return {
-        allClinics: '',
+        allDoctors: '',
         tableData: [],
         search: "",
         currentpage: 1, //当前页面
@@ -91,18 +91,18 @@
           value: 'department',
           label: '科室'
         }, {
-          value: 'address',
-          label: '地址'
+          value: 'sex',
+          label: '性别'
         }, {
-          value: 'phoneNum',
-          label: '联系电话'
+          value: 'age',
+          label: '年龄'
         }],
         value: ''
       }
     },
     methods: {
       doubleclickrow(row) {
-        this.$router.push({name: 'clinicdetailwindow', params: {clinicId: row.id}});
+        this.$router.push({name: 'doctorapplydetail', params: {doctorId: row.id}});
       },
       handleCurrentChange(val) {
         //点击中间页的按钮 执行的方法
@@ -123,8 +123,8 @@
         this.handleTableData();
       },
       handleTableData() {
-        this.tableData_length = this.allClinics.length;
-        this.tableData = this.allClinics.slice(
+        this.tableData_length = this.allDoctors.length;
+        this.tableData = this.allDoctors.slice(
           (this.currentpage - 1) * 10,
           this.currentpage * 10
         );
@@ -132,37 +132,37 @@
       handleSearch(val) {
         let search = val;
         if (search == "") {
-          this.tableData = this.allClinics;
+          this.tableData = this.allDoctors;
           this.tableData_length = this.tableData.length;
         }
         if (search != "") {
           if (this.value == '') {
-            this.tableData = this.allClinics.filter(
+            this.tableData = this.allDoctors.filter(
               (data) =>
                 !search || data.name.toLowerCase().includes(search.toLowerCase())
                 || data.department.toLowerCase().includes(search.toLowerCase())
-                || data.address.toLowerCase().includes(search.toLowerCase())
-                || data.phoneNum.toLowerCase().includes(search.toLowerCase())
+                || data.sex.toLowerCase().includes(search.toLowerCase())
+                || data.age.toLowerCase().includes(search.toLowerCase())
             );
           } else if (this.value == 'name') {
-            this.tableData = this.allClinics.filter(
+            this.tableData = this.allDoctors.filter(
               (data) =>
                 !search || data.name.toLowerCase().includes(search.toLowerCase())
             );
           } else if (this.value == 'department') {
-            this.tableData = this.allClinics.filter(
+            this.tableData = this.allDoctors.filter(
               (data) =>
                 !search || data.department.toLowerCase().includes(search.toLowerCase())
             );
-          } else if (this.value == 'address') {
-            this.tableData = this.allClinics.filter(
+          } else if (this.value == 'sex') {
+            this.tableData = this.allDoctors.filter(
               (data) =>
-                !search || data.address.toLowerCase().includes(search.toLowerCase())
+                !search || data.sex.toLowerCase().includes(search.toLowerCase())
             );
-          } else if (this.value == 'phoneNum') {
-            this.tableData = this.allClinics.filter(
+          } else if (this.value == 'age') {
+            this.tableData = this.allDoctors.filter(
               (data) =>
-                !search || data.phoneNum.toLowerCase().includes(search.toLowerCase())
+                !search || data.age.toLowerCase().includes(search.toLowerCase())
             );
           }
 
@@ -174,11 +174,11 @@
       //加载诊所信息
       this.$axios({
         method: 'post',
-        url: '/api/show_clinic/',
+        url: '/api/show_doctor/',
       }).then(function (response) {
-        this.allClinics = response.data.data;
-        this.tableData = this.allClinics;
-        this.tableData_length = this.allClinics.length;
+        this.allDoctors = response.data.data;
+        this.tableData = this.allDoctors;
+        this.tableData_length = this.allDoctors.length;
       }.bind(this));
     },
     watch: {
@@ -191,7 +191,7 @@
 </script>
 
 <style scoped>
-  #clinicswindow {
+  #doctormanagewindow {
     height: 100%;
   }
 </style>

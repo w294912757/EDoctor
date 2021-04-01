@@ -32,6 +32,10 @@
         <i class="el-icon-document"></i>
         <span slot="title">导航三</span>
       </el-menu-item>
+      <el-menu-item index="" disabled>
+        <i class="el-icon-document"></i>
+        <span slot="title">导航4</span>
+      </el-menu-item>
       <el-menu-item @click.native="logout">
         <i class="el-icon-setting"></i>
         <span slot="title">注销</span>
@@ -42,7 +46,7 @@
 
 <script>
   export default {
-    name: "DoctorNavigator",
+    name: "Clinic",
     data() {
       return {
         title: '',

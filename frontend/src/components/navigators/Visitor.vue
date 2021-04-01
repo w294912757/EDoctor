@@ -2,14 +2,23 @@
   <div id="navigator">
     <el-menu
       default-active="1"
-      @open=""
-      @close=""
+      @open="handleOpen"
+      @close="handleClose"
       router
     >
-      <el-menu-item index="">
+      <el-menu-item index="/login">
         <i class="el-icon-menu"></i>
-        <span slot="title">{{title}}</span>
+        <span slot="title">登录/注册</span>
       </el-menu-item>
+      <el-menu-item index="/clinics">
+        <i class="el-icon-document"></i>
+        <span slot="title">诊所查询</span>
+      </el-menu-item>
+      <el-menu-item index="/doctors">
+        <i class="el-icon-setting"></i>
+        <span slot="title">医生查询</span>
+      </el-menu-item>
+
       <el-submenu index="">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -25,41 +34,26 @@
         </el-menu-item-group>
         <el-submenu index="">
           <template slot="title">选项4</template>
-          <el-menu-item index="">选项1</el-menu-item>
+          <el-menu-item index="2-4-1">选项1</el-menu-item>
         </el-submenu>
       </el-submenu>
-      <el-menu-item index="" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
-      </el-menu-item>
-      <el-menu-item index="" disabled>
-        <i class="el-icon-document"></i>
-        <span slot="title">导航4</span>
-      </el-menu-item>
-      <el-menu-item @click.native="logout">
-        <i class="el-icon-setting"></i>
-        <span slot="title">注销</span>
-      </el-menu-item>
     </el-menu>
   </div>
 </template>
 
 <script>
   export default {
-    name: "ClinicNavigator",
+    name: "Visitor",
     data() {
-      return {
-        title: '',
-      }
+      return {}
     },
     methods: {
-      logout: function () {
-        this.$cookies.remove('operatorId');
-        this.$cookies.remove('usertype');
-        this.$router.go(0);
+      handleOpen: function (key, keyPath) {
+
+      },
+      handleClose: function (key, keyPath) {
+
       }
-    }, updated() {
-      this.title = this.$cookies.get('title');
     }
   }
 </script>

@@ -13,12 +13,12 @@
       <el-submenu index="">
         <template slot="title">
           <i class="el-icon-location"></i>
-          <span>导航一</span>
+          <span>用户管理</span>
         </template>
         <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="">选项1</el-menu-item>
-          <el-menu-item index="">选项2</el-menu-item>
+          <template slot="title">申请批准</template>
+          <el-menu-item index="/clinicapplymenu">诊所</el-menu-item>
+          <el-menu-item index="/doctorapplymenu">医生</el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group title="分组2">
           <el-menu-item index="">选项3</el-menu-item>
@@ -28,9 +28,9 @@
           <el-menu-item index="">选项1</el-menu-item>
         </el-submenu>
       </el-submenu>
-      <el-menu-item index="" disabled>
+      <el-menu-item index="/">
         <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
+        <span slot="title">用户管理</span>
       </el-menu-item>
       <el-menu-item @click.native="logout">
         <i class="el-icon-setting"></i>
@@ -42,7 +42,7 @@
 
 <script>
   export default {
-    name: "RootNavigator",
+    name: "Root",
     data() {
       return {
         title: '',
@@ -60,6 +60,6 @@
 
 <style scoped>
   #navigator {
-  margin-top: 50%;
+    margin-top: 50%;
   }
 </style>

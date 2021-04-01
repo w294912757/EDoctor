@@ -4,7 +4,7 @@
 
 <script>
   export default {
-    name: "ClinicDetailWindow",
+    name: "ClinicDetail",
     created() {
       let clinicId = this.$route.params.clinicId;
       let data = new FormData();

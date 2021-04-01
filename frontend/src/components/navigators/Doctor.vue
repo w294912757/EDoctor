@@ -2,23 +2,14 @@
   <div id="navigator">
     <el-menu
       default-active="1"
-      @open="handleOpen"
-      @close="handleClose"
+      @open=""
+      @close=""
       router
     >
-      <el-menu-item index="/loginwindow">
+      <el-menu-item index="">
         <i class="el-icon-menu"></i>
-        <span slot="title">登录/注册</span>
+        <span slot="title">{{title}}</span>
       </el-menu-item>
-      <el-menu-item index="/clinicswindow">
-        <i class="el-icon-document"></i>
-        <span slot="title">诊所查询</span>
-      </el-menu-item>
-      <el-menu-item index="/doctorswindow">
-        <i class="el-icon-setting"></i>
-        <span slot="title">医生查询</span>
-      </el-menu-item>
-
       <el-submenu index="">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -34,26 +25,37 @@
         </el-menu-item-group>
         <el-submenu index="">
           <template slot="title">选项4</template>
-          <el-menu-item index="2-4-1">选项1</el-menu-item>
+          <el-menu-item index="">选项1</el-menu-item>
         </el-submenu>
       </el-submenu>
+      <el-menu-item index="" disabled>
+        <i class="el-icon-document"></i>
+        <span slot="title">导航三</span>
+      </el-menu-item>
+      <el-menu-item @click.native="logout">
+        <i class="el-icon-setting"></i>
+        <span slot="title">注销</span>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
 
 <script>
   export default {
-    name: "VisitorNavigator",
+    name: "Doctor",
     data() {
-      return {}
+      return {
+        title: '',
+      }
     },
     methods: {
-      handleOpen: function (key, keyPath) {
-
-      },
-      handleClose: function (key, keyPath) {
-
+      logout: function () {
+        this.$cookies.remove('operatorId');
+        this.$cookies.remove('usertype');
+        this.$router.go(0);
       }
+    }, updated() {
+      this.title = this.$cookies.get('title');
     }
   }
 </script>
