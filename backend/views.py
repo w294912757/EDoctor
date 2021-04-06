@@ -1,11 +1,3 @@
-import os
-
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse
-
-from EDoctor import settings
-from backend.models import *
-from django.db.models import Q
 from backend.methods import *
 
 
@@ -21,7 +13,8 @@ def add_user(request):
     usertype = request.POST.get('usertype', '')
     operatorId = request.POST.get('operatorId', '')
     qualifications = request.FILES.getlist('qualifications')
-    return add_user_method(username, password, usertype, operatorId, qualifications, request.POST)
+    photos = request.FILES.getlist('photos')
+    return add_user_method(username, password, usertype, operatorId, qualifications, photos, request.POST)
 
 
 def delete_user(request):
@@ -31,7 +24,7 @@ def delete_user(request):
 
 
 def show_user(request):
-    return show_user_method()
+    return show_user_method(request)
 
 
 def query_user(request):
@@ -66,7 +59,8 @@ def delete_clinic(request):
 
 
 def show_clinic(request):
-    return show_clinic_method()
+    status = request.POST.get('status', '2')
+    return show_clinic_method(status)
 
 
 def query_clinic(request):
@@ -170,3 +164,11 @@ def alter_prescription(request):
     operatorId = request.POST.get('operatorId', '')
     return alter_prescription_method(id, patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId,
                                      operatorId)
+
+
+def get_image(request):
+    id = request.POST.get('id', '')
+    ownerType = request.POST.get('ownerType', '')
+    imageType = request.POST.get('imageType', '')
+    operatorId = request.POST.get('operatorId', '')
+    return get_image_method(id, ownerType, imageType, operatorId)

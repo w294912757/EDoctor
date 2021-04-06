@@ -11,6 +11,8 @@ import ClinicDetail from "../components/windows/visitor/detail/ClinicDetail";
 import DoctorDetail from "../components/windows/visitor/detail/DoctorDetail";
 import ClinicApplyMenu from "../components/windows/root/ClinicApplyMenu";
 import DoctorApplyMenu from "../components/windows/root/DoctorApplyMenu";
+import ClinicApplyDetail from "../components/windows/root/apply/ClinicApplyDetail";
+import DoctorApplyDetail from "../components/windows/root/apply/DoctorApplyDetail";
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -61,6 +63,14 @@ const routes = [
         path: '/doctorapplymenu',
         name: 'doctorapplymenu',
         component: DoctorApplyMenu
+      }, {
+        path: '/clinicapplydetail',
+        name: 'clinicapplydetail',
+        component: ClinicApplyDetail
+      }, {
+        path: '/doctorapplydetail',
+        name: 'doctorapplydetail',
+        component: DoctorApplyDetail
       }
     ]
   }

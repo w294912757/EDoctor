@@ -18,20 +18,37 @@
         <el-radio v-model="usertype" label="1">诊所</el-radio>
         <el-radio v-model="usertype" label="2">医生</el-radio>
 
-        <el-form-item>
+        <el-form-item label="资质凭证:">
           <el-upload
             list-type="picture-card"
             :auto-upload="false"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
-            ref="upload"
+            ref="qualifications"
             accept="image/jpeg,image/png,image/jpg"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
 
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
+          <el-dialog :visible.sync="qualificationVisible">
+            <img width="100%" :src="qualificationUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+
+        <el-form-item label="诊所/个人照片:">
+          <el-upload
+            list-type="picture-card"
+            :auto-upload="false"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            ref="photos"
+            accept="image/jpeg,image/png,image/jpg"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+
+          <el-dialog :visible.sync="photoVisible">
+            <img width="100%" :src="photoUrl" alt="">
           </el-dialog>
         </el-form-item>
 
@@ -92,8 +109,11 @@
     name: "SignUp",
     data() {
       return {
-        dialogImageUrl: '',
-        dialogVisible: false,
+        qualificationUrl: '',
+        qualificationVisible: false,
+
+        photoUrl: '',
+        photoVisible: false,
 
         username: '',
         password: '',
@@ -120,8 +140,8 @@
         console.log(file, fileList);
       },
       handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
+        this.qualificationUrl = file.url;
+        this.qualificationVisible = true;
       },
 
       signup: function () {
@@ -129,15 +149,14 @@
           this.message = '两次输入的密码不一致，请重试!';
         } else {
           let data = new FormData();
-          let images = new Array();
-          for (let i = 0; i < this.$refs.upload.uploadFiles.length; i++) {
-            images[i] = this.$refs.upload.uploadFiles[i].raw;
-          }
           data.append('username', this.username);
           data.append('password', this.password);
           data.append('usertype', this.usertype);
-          for (let i = 0; i < this.$refs.upload.uploadFiles.length; i++) {
-            data.append('qualifications', this.$refs.upload.uploadFiles[i].raw);
+          for (let i = 0; i < this.$refs.qualifications.uploadFiles.length; i++) {
+            data.append('qualifications', this.$refs.qualifications.uploadFiles[i].raw);
+          }
+          for (let i = 0; i < this.$refs.photos.uploadFiles.length; i++) {
+            data.append('photos', this.$refs.photos.uploadFiles[i].raw);
           }
           if (this.clinicSignUpWindow) {
             data.append('name', this.clinicName);

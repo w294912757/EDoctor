@@ -172,9 +172,12 @@
     },
     created() {
       //加载诊所信息
+      let data = new FormData();
+      data.append('status', '0');
       this.$axios({
         method: 'post',
         url: '/api/show_clinic/',
+        data: data
       }).then(function (response) {
         this.allClinics = response.data.data;
         this.tableData = this.allClinics;
