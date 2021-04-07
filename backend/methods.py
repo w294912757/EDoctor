@@ -976,24 +976,21 @@ def get_image_method(id, ownerType, imageType, operatorId):
         data = []
         imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, imageType)
         for image in os.listdir(imagePath):
-            singleImagePath = os.path.join(imagePath, image)
-            image = base64.b64encode(open(singleImagePath, 'rb').read())
-            data.append(image)
+            singleImagePath = os.path.join('images', ownerType, id, imageType, image)
+            data.append(singleImagePath)
 
         return JsonResponse({'data': data})
     else:
         qualifications = []
         imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, 'qualification')
         for image in os.listdir(imagePath):
-            singleImagePath = os.path.join(imagePath, image)
-            image = base64.b64encode(open(singleImagePath, 'rb').read()).decode('utf-8')
-            qualifications.append(image)
+            singleImagePath = os.path.join('images', ownerType, id, 'qualification', image)
+            qualifications.append(singleImagePath)
 
         photos = []
         imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, 'photo')
         for image in os.listdir(imagePath):
-            singleImagePath = os.path.join(imagePath, image)
-            image = base64.b64encode(open(singleImagePath, 'rb').read()).decode('utf-8')
-            photos.append(image)
+            singleImagePath = os.path.join('images', ownerType, id, 'photo', image)
+            photos.append(singleImagePath)
 
-        return JsonResponse({'qualification': qualifications, 'photo': photos})
+        return JsonResponse({'qualifications': qualifications, 'photos': photos})

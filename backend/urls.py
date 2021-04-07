@@ -1,4 +1,5 @@
-from django.urls import path, include
+
+from django.urls import path
 from backend import views
 
 urlpatterns = [
@@ -23,5 +24,7 @@ urlpatterns = [
     path('show_prescription/', views.show_prescription),
     path('query_prescription/', views.query_prescription),
     path('alter_prescription/', views.alter_prescription),
-    path('get_image/', views.get_image)
+    path('get_image/', views.get_image),
+
+
 ]

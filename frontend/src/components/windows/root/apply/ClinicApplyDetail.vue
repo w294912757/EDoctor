@@ -1,11 +1,19 @@
 <template>
-  <el-image v-for="qualification in qualifications" :src="qualification" lazy placeholder="凭证图片加载中">
+  <div>
+    <el-image v-for="qualification in qualifications"
+              :src="qualification"
+              style="width: 5vw;height: 10vh;display: block"
+    >
 
-  </el-image>
+    </el-image>
 
-  <el-image v-for="photo in photos" :src="photo" lazy placeholder="诊所图片加载中">
+    <el-image v-for="photo in photos"
+              :src="photo"
+              style="width: 5vw;height: 10vh;display: block"
+    >
 
-  </el-image>
+    </el-image>
+  </div>
 </template>
 
 <script>
@@ -13,14 +21,14 @@
     name: "ClinicApplyDetail",
     data() {
       return {
-        qualifications: '',
-        photos: '',
+        qualifications: [],
+        photos: [],
       }
     },
     created() {
       let clinicId = this.$route.params.clinicId;
-      let data = new FormData();
       let operatorId = this.$cookies.get('operatorId');
+      let data = new FormData();
       data.append('keyword', clinicId);
       data.append('searchtype', 'id');
       data.append('operatorId', operatorId);
@@ -29,7 +37,6 @@
         url: '/api/query_clinic/',
         data: data
       }).then(function (response) {
-        console.log(response.data.data);
       }.bind(this));
 
       let imagedata = new FormData();
