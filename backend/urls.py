@@ -1,4 +1,3 @@
-
 from django.urls import path
 from backend import views
 
@@ -25,6 +24,6 @@ urlpatterns = [
     path('query_prescription/', views.query_prescription),
     path('alter_prescription/', views.alter_prescription),
     path('get_image/', views.get_image),
-
+    path('change_user_authority/', views.change_user_authority),
 
 ]

@@ -60,8 +60,10 @@ def add_user_method(username, password, usertype, operatorId, qualifications, ph
             photoPath = os.path.join(settings.UPLOAD_FILE, 'clinics', str(latestId), 'photo')
 
         else:
+            clinicIdOfDoctor = data.get('clinicIdOfDoctor', '')
             add_doctor_method(data.get('name', ''), data.get('department', ''),
-                              data.get('sex', ''), data.get('age', ''), latestUserId)
+                              data.get('sex', ''), data.get('age', ''), latestUserId,
+                              clinicIdOfDoctor, operatorId)
             latestId = Doctor.objects.latest('id').id
             qualificationPath = os.path.join(settings.UPLOAD_FILE, 'doctors', str(latestId), 'qualification')
             photoPath = os.path.join(settings.UPLOAD_FILE, 'doctors', str(latestId), 'photo')
@@ -410,11 +412,12 @@ def alter_clinic_method(id, name, department, address, phoneNum, userId, operato
 
 
 def add_doctor_method(name, department, sex, age, userId, clinicId, operatorId):
-    user = User.objects.filter(id=userId)
-    clinic = Clinic.objects.filter(id=clinicId)
+    user = User.objects.get(id=userId)
+    clinic = Clinic.objects.get(id=clinicId)
     Doctor.objects.create(name=name, department=department, sex=sex, age=age, userId=user, clinicId=clinic)
     latestDoctorId = Doctor.objects.latest('id').id
-    resultData = 'name:' + name + 'department:' + department + ' sex:' + sex + ' age:' + age + ' userId:' + userId + ' clinicId:' + clinicId
+    resultData = 'name:' + name + 'department:' + department + ' sex:' + sex + ' age:' + age + ' userId:' + str(
+        userId) + ' clinicId:' + str(clinicId)
     DoctorLog.objects.create(dataId=latestDoctorId, operationType='add', originData='', resultData=resultData,
                              operatorId=operatorId)
     return JsonResponse({'message': '医生添加成功'})
@@ -428,21 +431,55 @@ def delete_doctor_method(id, operatorId):
     return JsonResponse({'message': '医生删除成功'})
 
 
-def show_doctor_method():
+def show_doctor_method(status):
     doctors = Doctor.objects.all()
     data = []
-    for i in doctors:
-        doctor = {}
-        # 给字典添加键值对
-        doctor['id'] = i.id
-        doctor['name'] = i.name
-        doctor['department'] = i.department
-        doctor['sex'] = i.sex
-        doctor['age'] = i.age
-        doctor['userId'] = i.userId.id
-        doctor['clinicId'] = i.clinicId.id
-        doctor['clinicName'] = i.clinicId.name
-        data.append(doctor)
+    if status == '2':
+        # 默认返回所有诊所
+        for i in doctors:
+            doctor = {}
+            # 给字典添加键值对
+            doctor['id'] = i.id
+            doctor['name'] = i.name
+            doctor['department'] = i.department
+            doctor['sex'] = i.sex
+            doctor['age'] = i.age
+            doctor['userId'] = i.userId.id
+            doctor['clinicId'] = i.clinicId.id
+            doctor['clinicName'] = i.clinicId.name
+            data.append(doctor)
+    elif status == '0':
+        # 等待授权的诊所
+        for i in doctors:
+            if i.userId.authorized == 1:
+                continue
+            doctor = {}
+            # 给字典添加键值对
+            doctor['id'] = i.id
+            doctor['name'] = i.name
+            doctor['department'] = i.department
+            doctor['sex'] = i.sex
+            doctor['age'] = i.age
+            doctor['userId'] = i.userId.id
+            doctor['clinicId'] = i.clinicId.id
+            doctor['clinicName'] = i.clinicId.name
+            data.append(doctor)
+    elif status == '1':
+        # 已授权的诊所
+        for i in doctors:
+            if i.userId.authorized == 0:
+                continue
+            doctor = {}
+            # 给字典添加键值对
+            doctor['id'] = i.id
+            doctor['name'] = i.name
+            doctor['department'] = i.department
+            doctor['sex'] = i.sex
+            doctor['age'] = i.age
+            doctor['userId'] = i.userId.id
+            doctor['clinicId'] = i.clinicId.id
+            doctor['clinicName'] = i.clinicId.name
+
     return JsonResponse({'message': '查询成功', 'data': data})
 
 
@@ -994,3 +1031,14 @@ def get_image_method(id, ownerType, imageType, operatorId):
             photos.append(singleImagePath)
 
         return JsonResponse({'qualifications': qualifications, 'photos': photos})
+
+
+def change_user_authority_method(id, usertype, operatorId, changeTo):
+    user = []
+    if usertype == '1':
+        user = Clinic.objects.get(id=id).userId
+    elif usertype == '2':
+        user = Doctor.objects.get(id=id).userId
+    user.authorized = changeTo
+    user.save()
+    return JsonResponse({'message': '更改授权情况成功'})

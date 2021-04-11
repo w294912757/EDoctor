@@ -87,7 +87,7 @@
 
 <script>
   export default {
-    name: "DoctorsWindow",
+    name: "Doctors",
     data() {
       return {
         allDoctors: '',
@@ -192,9 +192,12 @@
     },
     created() {
       //加载医生信息
+      let params = new FormData();
+      params.append('status', '1');
       this.$axios({
         method: 'post',
         url: '/api/show_doctor/',
+        data: params
       }).then(function (response) {
         this.allDoctors = response.data.data;
         this.tableData = this.allDoctors;

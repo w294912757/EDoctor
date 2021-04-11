@@ -21,6 +21,12 @@
       </el-table-column>
       <el-table-column
         sortable
+        prop="clinicName"
+        label="所属诊所"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        sortable
         prop="department"
         label="科室"
         width="180">
@@ -86,7 +92,10 @@
 
         options: [{
           value: 'name',
-          label: '名称'
+          label: '姓名'
+        }, {
+          value: 'clinicName',
+          label: '所属诊所'
         }, {
           value: 'department',
           label: '科室'
@@ -172,9 +181,12 @@
     },
     created() {
       //加载诊所信息
+      let params = new FormData();
+      params.append('status', '0');
       this.$axios({
         method: 'post',
         url: '/api/show_doctor/',
+        data: params
       }).then(function (response) {
         this.allDoctors = response.data.data;
         this.tableData = this.allDoctors;

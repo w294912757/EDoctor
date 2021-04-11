@@ -40,13 +40,13 @@
         } else if (this.password == '') {
           this.message = '请输入密码';
         } else {
-          let data = new FormData();
-          data.append('username', this.username);
-          data.append('password', this.password);
+          let params = new FormData();
+          params.append('username', this.username);
+          params.append('password', this.password);
           this.$axios({
             method: 'post',
             url: '/api/login/',
-            data: data
+            data: params
           }).then(function (response) {
             let checkCode = response.data.checkCode;
             if (checkCode === '2') {

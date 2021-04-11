@@ -99,7 +99,8 @@ def delete_doctor(request):
 
 
 def show_doctor(request):
-    return show_doctor_method()
+    status = request.POST.get('status', '2')
+    return show_doctor_method(status)
 
 
 def query_doctor(request):
@@ -172,3 +173,11 @@ def get_image(request):
     imageType = request.POST.get('imageType', '')
     operatorId = request.POST.get('operatorId', '')
     return get_image_method(id, ownerType, imageType, operatorId)
+
+
+def change_user_authority(request):
+    id = request.POST.get('id', '')
+    usertype = request.POST.get('usertype', '')
+    operatorId = request.POST.get('operatorId', '')
+    changeTo = request.POST.get('changeTo', '')
+    return change_user_authority_method(id,usertype, operatorId, changeTo)

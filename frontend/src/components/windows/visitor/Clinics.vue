@@ -75,7 +75,7 @@
 
 <script>
   export default {
-    name: "ClinicsWindow",
+    name: "Clinics",
     data() {
       return {
         allClinics: '',
@@ -172,9 +172,12 @@
     },
     created() {
       //加载诊所信息
+      let params = new FormData();
+      params.append('status', '1');
       this.$axios({
         method: 'post',
         url: '/api/show_clinic/',
+        data: params
       }).then(function (response) {
         this.allClinics = response.data.data;
         this.tableData = this.allClinics;
