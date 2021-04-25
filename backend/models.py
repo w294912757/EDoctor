@@ -91,3 +91,8 @@ class UserLog(models.Model):
     operatorId = models.CharField(max_length=20, blank=False, null=False)
     createTime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updateTime = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+
+class Disease(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, blank=False, null=False)

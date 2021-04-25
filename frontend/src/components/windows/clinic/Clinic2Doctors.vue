@@ -35,22 +35,11 @@
         </el-table-column>
         <el-table-column
           sortable
-          prop="clinicId"
-          label="clinicId"
-          v-if="false">
-        </el-table-column>
-        <el-table-column
-          sortable
           prop="name"
           label="姓名"
           width="180">
         </el-table-column>
-        <el-table-column
-          sortable
-          prop="clinicName"
-          label="单位"
-          width="180">
-        </el-table-column>
+
         <el-table-column
           sortable
           prop="department"
@@ -86,7 +75,7 @@
 
 <script>
   export default {
-    name: "Doctors",
+    name: "Clinic2Doctors",
     data() {
       return {
         allDoctors: '',
@@ -101,9 +90,6 @@
         }, {
           value: 'department',
           label: '科室'
-        }, {
-          value: 'clinicName',
-          label: '单位'
         }, {
           value: 'sex',
           label: '性别'
@@ -163,11 +149,6 @@
               (data) =>
                 !search || data.name.toLowerCase().includes(search.toLowerCase())
             );
-          } else if (this.value == 'clinicName') {
-            this.tableData = this.allDoctors.filter(
-              (data) =>
-                !search || data.clinicName.toLowerCase().includes(search.toLowerCase())
-            );
           } else if (this.value == 'department') {
             this.tableData = this.allDoctors.filter(
               (data) =>
@@ -192,10 +173,12 @@
     created() {
       //加载医生信息
       let params = new FormData();
-      params.append('status', '1');
+      params.append('operatorId', this.$cookies.get('operatorId'));
+      params.append('keyword', this.$cookies.get('clinicId'));
+      params.append('searchtype', 'clinicId');
       this.$axios({
         method: 'post',
-        url: '/api/show_doctor/',
+        url: '/api/query_doctor/',
         data: params
       }).then(function (response) {
         this.allDoctors = response.data.data;

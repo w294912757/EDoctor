@@ -1,19 +1,47 @@
 <template>
   <div>
-    <P>诊所名：{{name}}</P>
-    <P>地址：{{address}}</P>
-    <P>联系电话：{{phoneNum}}</P>
-    <P>科室：{{department}}</P>
+    <div>
+      <el-form>
+        <el-row>
+          <el-col span="11">
+            <el-form-item label="诊所名：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="name" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col span="11">
+            <el-form-item label="地址：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="address" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col span="11">
+            <el-form-item label="联系电话：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="phoneNum" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="2">
+            <div></div>
+          </el-col>
+          <el-col span="11">
+            <el-form-item label="科室：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="department" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
     <el-image v-for="qualification in qualifications"
               :src="qualification"
-              style="width: 5vw;height: 10vh;display: block"
+              style="width: 10vw;height: 15vh;display: block"
     >
 
     </el-image>
 
     <el-image v-for="photo in photos"
               :src="photo"
-              style="width: 5vw;height: 10vh;display: block"
+              style="width: 10vw;height: 15vh;display: block"
     >
 
     </el-image>
@@ -89,5 +117,8 @@
 </script>
 
 <style scoped>
-
+  .remarks >>> .is-disabled .el-input__inner {
+    　　background-color: white;
+    　　border-color: white；
+  }
 </style>

@@ -132,7 +132,9 @@ def add_prescription(request):
     treatment = request.POST.get('treatment', '')
     doctorId = request.POST.get('doctorId', '')
     operatorId = request.POST.get('operatorId', '')
-    return add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId)
+    photos = request.FILES.getlist('photos')
+    return add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId,
+                                   photos)
 
 
 def delete_prescription(request):
@@ -180,4 +182,4 @@ def change_user_authority(request):
     usertype = request.POST.get('usertype', '')
     operatorId = request.POST.get('operatorId', '')
     changeTo = request.POST.get('changeTo', '')
-    return change_user_authority_method(id,usertype, operatorId, changeTo)
+    return change_user_authority_method(id, usertype, operatorId, changeTo)

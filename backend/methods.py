@@ -26,18 +26,25 @@ def login_method(username, password):
             usertype = result.usertype
             # 称呼
             title = ''
+            userId = ''
             if usertype == '1':
-                title = Clinic.objects.filter(userId=operatorId).name
+                title = Clinic.objects.get(userId=operatorId).name
+                userId = Clinic.objects.get(userId=operatorId).id
             elif usertype == '2':
-                title = Doctor.objects.filter(userId=operatorId).name
+                title = Doctor.objects.get(userId=operatorId).name
+                userId = Doctor.objects.get(userId=operatorId).id
             elif usertype == '3':
-                title = User.objects.filter(id=operatorId)[0].username
+                title = User.objects.get(id=operatorId).username
             UserLog.objects.create(dataId=operatorId, operationType='login', originData='', resultData='',
                                    operatorId=operatorId)
             rst = {'checkCode': '2', 'title': title}
             response = JsonResponse(rst)
             response.set_cookie('operatorId', operatorId)
             response.set_cookie('usertype', usertype)
+            if usertype == '1':
+                response.set_cookie('clinicId', userId)
+            elif usertype == '2':
+                response.set_cookie('doctorId', userId)
             return response
         else:
             # 密码错误
@@ -595,7 +602,7 @@ def query_doctor_method(keyword, searchtype, operatorId):
         else:
             return JsonResponse({'message': '查询的数据不存在'})
     if searchtype == 'clinicId':
-        result = Doctor.objects.filter(clinicId__contains=keyword)
+        result = Doctor.objects.filter(clinicId=keyword)
         if result:
             data = []
             for i in result:
@@ -610,7 +617,7 @@ def query_doctor_method(keyword, searchtype, operatorId):
                 doctor['clinicId'] = i.clinicId.id
                 doctor['clinicName'] = i.clinicId.name
                 data.append(doctor)
-            DoctorLog.objects.create(dataId=data[0].id, operationType='query by clinicId:', originData=keyword,
+            DoctorLog.objects.create(dataId='', operationType='query by clinicId:', originData=keyword,
                                      resultData='',
                                      operatorId=operatorId)
             return JsonResponse({'message': '查询成功', 'data': data})
@@ -678,11 +685,21 @@ def alter_doctor_method(id, name, department, sex, age, userId, clinicId, operat
     return JsonResponse({'message': '医生更改成功'})
 
 
-def add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId):
-    doctor = Doctor.objects.filter(id=doctorId)
+def add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId,
+                            photos):
+    doctor = Doctor.objects.get(id=doctorId)
     Prescription.objects.create(patientName=patientName, sex=sex, age=age, phoneNum=phoneNum, diagnosis=diagnosis,
                                 feature=feature, treatment=treatment, doctorId=doctor)
     latestPrescriptionId = Prescription.objects.latest('id').id
+    photoPath = os.path.join(settings.UPLOAD_FILE, 'prescriptions', str(latestPrescriptionId))
+    os.makedirs(photoPath)
+    for photo in photos:
+        imageFilename = os.path.join(photoPath, photo.name)
+        f = open(imageFilename, 'wb')
+        for i in photo.chunks():
+            f.write(i)
+        f.close()
+
     resultData = 'patientName:' + patientName + ' sex:' + sex + ' age:' + age + ' phoneNum:' + phoneNum + ' diagnosis:' + diagnosis + ' feature:' + feature + ' treatment:' + treatment + ' doctorId:' + doctorId
     PrescriptionLog.objects.create(dataId=latestPrescriptionId, operationType='add', originData='',
                                    resultData=resultData,
@@ -721,13 +738,12 @@ def show_prescription_method():
 def query_prescription_method(keyword, searchtype, operatorId):
     data = {}
     if searchtype == 'id':
-        result = Prescription.objects.filter(id=keyword)
+        result = Prescription.objects.get(id=keyword)
         if not result:
             return JsonResponse({'message': '查询对象结果为空'})
 
         else:
             # 给字典添加键值对
-            result = result[0]
             data['id'] = result.id
             data['patientName'] = result.patientName
             data['sex'] = result.sex
@@ -904,7 +920,7 @@ def query_prescription_method(keyword, searchtype, operatorId):
         else:
             return JsonResponse({'message': '查询的数据不存在'})
     if searchtype == 'doctorId':
-        result = Prescription.objects.filter(doctorId__contains=keyword)
+        result = Prescription.objects.filter(doctorId=keyword)
         if result:
             data = []
             for i in result:
@@ -920,7 +936,34 @@ def query_prescription_method(keyword, searchtype, operatorId):
                 prescription['treatment'] = i.treatment
                 prescription['doctorId'] = i.doctorId.id
                 data.append(prescription)
-            PrescriptionLog.objects.create(dataId=data[0].id, operationType='query by doctorId', originData=keyword,
+            PrescriptionLog.objects.create(dataId='', operationType='query by doctorId', originData=keyword,
+                                           resultData='',
+                                           operatorId=operatorId)
+            return JsonResponse({'message': '查询成功', 'data': data})
+        else:
+            return JsonResponse({'message': '查询的数据不存在'})
+    if searchtype == 'clinicId':
+        doctors = Doctor.objects.filter(clinicId=keyword)
+        result = []
+        for doctor in doctors:
+            result.append(Prescription.objects.get(doctorId=doctor.id))
+        if result:
+            data = []
+            for i in result:
+                prescription = {}
+                # 给字典添加键值对
+                prescription['id'] = i.id
+                prescription['patientName'] = i.patientName
+                prescription['sex'] = i.sex
+                prescription['age'] = i.age
+                prescription['phoneNum'] = i.phoneNum
+                prescription['diagnosis'] = i.diagnosis
+                prescription['feature'] = i.feature
+                prescription['treatment'] = i.treatment
+                prescription['doctorId'] = i.doctorId.id
+                prescription['doctorName'] = i.doctorId.name
+                data.append(prescription)
+            PrescriptionLog.objects.create(dataId='', operationType='query by clinicId', originData=keyword,
                                            resultData='',
                                            operatorId=operatorId)
             return JsonResponse({'message': '查询成功', 'data': data})
@@ -1009,28 +1052,31 @@ def alter_prescription_method(id, patientName, sex, age, phoneNum, diagnosis, fe
 
 
 def get_image_method(id, ownerType, imageType, operatorId):
-    if not imageType == 'all':
-        data = []
-        imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, imageType)
-        for image in os.listdir(imagePath):
-            singleImagePath = os.path.join('images', ownerType, id, imageType, image)
-            data.append(singleImagePath)
+    try:
+        if not imageType == 'all':
+            data = []
+            imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, imageType)
+            for image in os.listdir(imagePath):
+                singleImagePath = os.path.join('images', ownerType, id, imageType, image)
+                data.append(singleImagePath)
 
-        return JsonResponse({'data': data})
-    else:
-        qualifications = []
-        imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, 'qualification')
-        for image in os.listdir(imagePath):
-            singleImagePath = os.path.join('images', ownerType, id, 'qualification', image)
-            qualifications.append(singleImagePath)
+            return JsonResponse({'data': data})
+        else:
+            qualifications = []
+            imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, 'qualification')
+            for image in os.listdir(imagePath):
+                singleImagePath = os.path.join('images', ownerType, id, 'qualification', image)
+                qualifications.append(singleImagePath)
 
-        photos = []
-        imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, 'photo')
-        for image in os.listdir(imagePath):
-            singleImagePath = os.path.join('images', ownerType, id, 'photo', image)
-            photos.append(singleImagePath)
+            photos = []
+            imagePath = os.path.join(settings.UPLOAD_FILE, ownerType, id, 'photo')
+            for image in os.listdir(imagePath):
+                singleImagePath = os.path.join('images', ownerType, id, 'photo', image)
+                photos.append(singleImagePath)
 
-        return JsonResponse({'qualifications': qualifications, 'photos': photos})
+            return JsonResponse({'qualifications': qualifications, 'photos': photos})
+    except:
+        return JsonResponse({'checkCode': '0'})
 
 
 def change_user_authority_method(id, usertype, operatorId, changeTo):

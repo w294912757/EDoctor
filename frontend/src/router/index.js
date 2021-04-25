@@ -13,6 +13,11 @@ import ClinicApplyMenu from "../components/windows/root/ClinicApplyMenu";
 import DoctorApplyMenu from "../components/windows/root/DoctorApplyMenu";
 import ClinicApplyDetail from "../components/windows/root/apply/ClinicApplyDetail";
 import DoctorApplyDetail from "../components/windows/root/apply/DoctorApplyDetail";
+import CreatePrescription from "../components/windows/doctor/CreatePrescription";
+import AllPrescriptions from "../components/windows/doctor/AllPrescriptions";
+import PrescriptionDetail from "../components/windows/doctor/PrescriptionDetail";
+import Clinic2Doctors from "../components/windows/clinic/Clinic2Doctors";
+import Clinic2Prescriptions from "../components/windows/clinic/Clinic2Prescriptions";
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -71,6 +76,26 @@ const routes = [
         path: '/doctorapplydetail',
         name: 'doctorapplydetail',
         component: DoctorApplyDetail
+      }, {
+        path: '/createprescription',
+        name: 'createprescription',
+        component: CreatePrescription
+      }, {
+        path: '/allprescriptions',
+        name: 'allprescriptions',
+        component: AllPrescriptions
+      }, {
+        path: '/prescriptiondetail',
+        name: 'prescriptiondetail',
+        component: PrescriptionDetail
+      }, {
+        path: '/clinic2prescriptions',
+        name: 'clinic2prescriptions',
+        component: Clinic2Prescriptions
+      }, {
+        path: '/clinic2doctors',
+        name: 'clinic2doctors',
+        component: Clinic2Doctors
       }
     ]
   }

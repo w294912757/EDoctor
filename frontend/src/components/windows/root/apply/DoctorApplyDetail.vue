@@ -1,20 +1,52 @@
 <template>
   <div>
-    <P>姓名：{{name}}</P>
-    <P>所属诊所：{{clinicName}}</P>
-    <P>科室：{{department}}</P>
-    <P>性别：{{sex}}</P>
-    <P>年龄：{{age}}</P>
+    <div>
+      <el-form>
+        <el-row>
+          <el-col span="4">
+            <el-form-item label="姓名：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="name" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="16">
+            <el-form-item label="所属诊所：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="clinicName" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="4">
+            <el-form-item label="科室：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="department" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col span="11">
+            <el-form-item label="性别：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="sex" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col span="2">
+            <div></div>
+          </el-col>
+          <el-col span="11">
+            <el-form-item label="年龄：" style="margin-bottom: 2px;" size="mini">
+              <el-input v-model="age" placeholder="" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+
     <el-image v-for="qualification in qualifications"
               :src="qualification"
-              style="width: 5vw;height: 10vh;display: block"
+              style="width: 10vw;height: 15vh;display: block"
     >
 
     </el-image>
 
     <el-image v-for="photo in photos"
               :src="photo"
-              style="width: 5vw;height: 10vh;display: block"
+              style="width: 10vw;height: 15vh;display: block"
     >
 
     </el-image>
@@ -93,5 +125,8 @@
 </script>
 
 <style scoped>
-
+  .remarks >>> .is-disabled .el-input__inner {
+    　　background-color: white;
+    　　border-color: white；
+  }
 </style>

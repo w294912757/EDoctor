@@ -7,40 +7,9 @@
       height="100%"
       width="100%"
       @row-dblclick="doubleclickrow">
-      <el-table-column
-        sortable
-        prop="id"
-        label="Id"
-        v-if="false">
-      </el-table-column>
-      <el-table-column
-        sortable
-        prop="name"
-        label="名称"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        sortable
-        prop="department"
-        label="科室"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        sortable
-        prop="address"
-        label="地址"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        sortable
-        prop="phoneNum"
-        label="联系电话"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        align="right">
+      <el-table-column>
         <template slot="header" slot-scope="scope">
-          <div style="width: 30%;float: left">
+          <div style="width: 15%;float: left">
             <el-select v-model="value" filterable clearable placeholder="全局搜索">
               <el-option
                 v-for="item in options"
@@ -50,7 +19,7 @@
               </el-option>
             </el-select>
           </div>
-          <div style="width: 65%;float: right">
+          <div style="width: 20%;float: left;margin-left: 10px">
             <el-input
               v-model="search"
               size="mini"
@@ -58,6 +27,36 @@
             />
           </div>
         </template>
+        <el-table-column
+          sortable
+          prop="id"
+          label="Id"
+          v-if="false">
+        </el-table-column>
+        <el-table-column
+          sortable
+          prop="name"
+          label="名称"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          sortable
+          prop="department"
+          label="科室"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          sortable
+          prop="address"
+          label="地址"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          sortable
+          prop="phoneNum"
+          label="联系电话"
+          width="180">
+        </el-table-column>
       </el-table-column>
     </el-table>
     <el-pagination

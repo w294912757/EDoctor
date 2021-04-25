@@ -28,13 +28,13 @@
           <el-menu-item index="">选项1</el-menu-item>
         </el-submenu>
       </el-submenu>
-      <el-menu-item index="" disabled>
+      <el-menu-item index="/clinic2doctors">
         <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
+        <span slot="title">医生列表</span>
       </el-menu-item>
-      <el-menu-item index="" disabled>
+      <el-menu-item index="/clinic2prescriptions">
         <i class="el-icon-document"></i>
-        <span slot="title">导航4</span>
+        <span slot="title">病历列表</span>
       </el-menu-item>
       <el-menu-item @click.native="logout">
         <i class="el-icon-setting"></i>

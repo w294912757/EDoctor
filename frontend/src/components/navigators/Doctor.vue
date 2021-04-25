@@ -28,9 +28,13 @@
           <el-menu-item index="">选项1</el-menu-item>
         </el-submenu>
       </el-submenu>
-      <el-menu-item index="" disabled>
+      <el-menu-item index="/createprescription">
         <i class="el-icon-document"></i>
-        <span slot="title">导航三</span>
+        <span slot="title">新建病例</span>
+      </el-menu-item>
+      <el-menu-item index="allprescriptions">
+        <i class="el-icon-document"></i>
+        <span slot="title">查看病历</span>
       </el-menu-item>
       <el-menu-item @click.native="logout">
         <i class="el-icon-setting"></i>
