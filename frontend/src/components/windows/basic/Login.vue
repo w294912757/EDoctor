@@ -1,11 +1,11 @@
 <template>
   <div id="loginwindow">
     <el-form>
-      <el-form-item label="账号："  size="mini" required>
+      <el-form-item label="账号：" size="mini" required>
         <el-input v-model="username" placeholder="请输入账号"></el-input>
       </el-form-item>
 
-      <el-form-item label="密码："  size="mini" required>
+      <el-form-item label="密码：" size="mini" required>
         <el-input v-model="password" placeholder="请输入密码" show-password></el-input>
       </el-form-item>
 
@@ -49,6 +49,7 @@
             data: params
           }).then(function (response) {
             let checkCode = response.data.checkCode;
+            console.log(response);
             if (checkCode === '2') {
               let title = response.data.title;
               this.$cookies.set('title', title);
