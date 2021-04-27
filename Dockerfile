@@ -11,3 +11,4 @@ RUN sed -i 's/\r//' ./build.sh
 RUN chmod +x ./build.sh
 RUN sed -i 's/\r//' ./server.sh
 RUN chmod +x ./server.sh
+EXPOSE 8020
