@@ -16,7 +16,7 @@ def analyse_words(prescriptions):
     print(count.most_common())
 
 
-db = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='root', db='EDoctor', charset='utf8')
+db = pymysql.connect(host='112.124.56.37', port=3306, user='root', passwd='123456', db='edoctor', charset='utf8')
 cursor = db.cursor()
 # sql = "select * from backend_prescription"
 # cursor.execute(sql)
@@ -28,6 +28,6 @@ dic_list = list(dic)
 
 for i in dic_list:
     if i[1] == 'DIS':
-        sql = "insert into backend_Disease(name) values('%s')" % (i[0])
+        sql = "insert into backend_disease(name) values('%s')" % (i[0])
         cursor.execute(sql)
         db.commit()

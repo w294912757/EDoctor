@@ -10,5 +10,11 @@
         <property name="serverTimezone" value="CST" />
       </driver-properties>
     </data-source>
+    <data-source source="LOCAL" name="Docker_EDoctor" uuid="40498cea-3d90-4c68-bd36-88b87496c59d">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://112.124.56.37:3306/edoctor</jdbc-url>
+    </data-source>
   </component>
 </project>

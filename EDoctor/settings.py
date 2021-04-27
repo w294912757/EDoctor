@@ -85,8 +85,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',  # 数据库引擎
         'NAME': 'edoctor',  # 数据库名
         'USER': 'root',  # 账号
-        'PASSWORD': 'root',  # 密码
-        'HOST': '127.0.0.1',  # HOST
+        'PASSWORD': '123456',  # 密码
+        'HOST': '112.124.56.37',  # HOST
         'POST': 3306,  # 端口
 
     }
