@@ -1,4 +1,5 @@
 FROM nginx:latest
+RUN yum install node
 RUN npm install
 RUN npm run build
 RUN rm /etc/nginx/conf.d/default.conf \
