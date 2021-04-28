@@ -1,2 +1,2 @@
 #!/bin/sh
-uwsgi   --enable-threads /var/www/html/EDoctor/uwsgi.ini
+uwsgi  --ini --enable-threads /var/www/html/EDoctor/uwsgi.ini
