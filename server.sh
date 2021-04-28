@@ -1,2 +1,2 @@
 #!/bin/sh
-uwsgi  --ini /var/www/html/EDoctor/uwsgi.ini
+sudo docker exec -it EDoctor_django /bin/bash start.sh
