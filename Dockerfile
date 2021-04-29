@@ -3,7 +3,7 @@ ENV PYTHONUNBUFFERED 1
 RUN mkdir -p /var/www/html/EDoctor
 WORKDIR /var/www/html/EDoctor
 ADD . /var/www/html/EDoctor
-RUN pip install -i https://pypi.doubanio.com/simple/ -r requirements.txt
+RUN pip install -r requirements.txt
 RUN sed -i 's/\r//' ./remove.sh
 RUN chmod +x ./remove.sh
 RUN sed -i 's/\r//' ./django.sh
