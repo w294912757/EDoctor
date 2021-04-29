@@ -14,3 +14,5 @@ RUN sed -i 's/\r//' ./start.sh
 RUN chmod +x ./start.sh
 RUN sed -i 's/\r//' ./migration.sh
 RUN chmod +x ./migration.sh
+RUN sed -i 's/\r//' ./ip.sh
+RUN chmod +x ./ip.sh
