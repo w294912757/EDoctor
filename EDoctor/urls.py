@@ -18,10 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
 from django.views.static import serve
+from django.views import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('backend.urls')),
     path('', TemplateView.as_view(template_name='index.html')),
-    url(r'^images/(?P<path>.*)$', serve, {"document_root": "./images/"})
+    url(r'^images/(?P<path>.*)$', serve, {"document_root": "./images/"}),
+    url(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}, name='static'),
 ]
