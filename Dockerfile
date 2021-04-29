@@ -10,5 +10,7 @@ RUN sed -i 's/\r//' ./django.sh
 RUN chmod +x ./django.sh
 RUN sed -i 's/\r//' ./vue.sh
 RUN chmod +x ./vue.sh
-RUN sed -i 's/\r//' ./server.sh
-RUN chmod +x ./server.sh
+RUN sed -i 's/\r//' ./start.sh
+RUN chmod +x ./start.sh
+RUN sed -i 's/\r//' ./migration.sh
+RUN chmod +x ./migration.sh
