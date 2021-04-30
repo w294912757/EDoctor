@@ -12,4 +12,4 @@ RUN chmod +x ./vue.sh
 RUN chmod +x ./start.sh
 RUN chmod +x ./migration.sh
 RUN chmod +x ./ip.sh
-EXPOSE 8000 8020
+
