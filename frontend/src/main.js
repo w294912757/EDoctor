@@ -16,7 +16,7 @@ Vue.use(VueAxios, axios);
 Vue.use(ElementUI);
 
 //解决跨域
-//axios.defaults.baseURL = 'http://112.124.56.37:8000/'
+axios.defaults.baseURL = 'http://112.124.56.37:8000/'
 
 Vue.prototype.$echarts = echarts
 Vue.config.productionTip = false;
