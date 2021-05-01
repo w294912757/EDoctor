@@ -14,7 +14,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(VueCookies);
 Vue.use(VueAxios, axios);
 Vue.use(ElementUI);
-
+axios.defaults.baseURL = "http://172.17.0.3:8000/"
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.$cookies = VueCookies;
