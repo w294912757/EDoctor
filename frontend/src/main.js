@@ -9,7 +9,10 @@ import App from './App'
 import router from "./router";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import echarts from 'echarts'
 
+//部署时增加，解决跨域问题
+axios.defaults.baseURL = "http://112.124.56.37:8000/"
 
 Vue.use(VueCookies);
 Vue.use(VueAxios, axios);
@@ -18,8 +21,7 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;
 Vue.prototype.$cookies = VueCookies;
-/* eslint-disable no-new */
-
+Vue.prototype.$echarts = echarts
 
 new Vue({
   el: '#app',
