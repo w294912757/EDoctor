@@ -21,7 +21,7 @@
         </el-form-item>
 
 
-        <el-form-item label="资质凭证:" size="mini">
+        <el-form-item label="资质凭证:" size="mini" required>
           <el-upload
             list-type="picture-card"
             :auto-upload="false"
@@ -38,7 +38,7 @@
           </el-dialog>
         </el-form-item>
 
-        <el-form-item label="诊所/个人照片:" size="mini">
+        <el-form-item label="诊所/个人照片:" size="mini" required>
           <el-upload
             list-type="picture-card"
             :auto-upload="false"
@@ -60,20 +60,20 @@
         <div v-if="clinicSignUpWindow">
           <el-row>
             <el-col span="11">
-              <el-form-item label="诊所名：" style="margin-bottom: 2px;" size="mini">
+              <el-form-item label="诊所名：" style="margin-bottom: 2px;" size="mini" required>
                 <el-input v-model="clinicName" placeholder="请输入诊所名"></el-input>
               </el-form-item>
             </el-col>
 
             <el-col span="11">
-              <el-form-item label="地址：" style="margin-bottom: 2px;" size="mini">
+              <el-form-item label="地址：" style="margin-bottom: 2px;" size="mini" required>
                 <el-input v-model="address" placeholder="请输入地址"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col span="11">
-              <el-form-item label="联系电话：" style="margin-bottom: 2px;" size="mini">
+              <el-form-item label="联系电话：" style="margin-bottom: 2px;" size="mini" required>
                 <el-input v-model="phoneNum" placeholder="请输入联系电话"></el-input>
               </el-form-item>
             </el-col>
@@ -81,7 +81,7 @@
               <div></div>
             </el-col>
             <el-col span="11">
-              <el-form-item label="科室：" style="margin-bottom: 2px;" size="mini">
+              <el-form-item label="科室：" style="margin-bottom: 2px;" size="mini" required>
                 <el-input v-model="clinicDepartment" placeholder="请输入科室"></el-input>
               </el-form-item>
             </el-col>
@@ -89,46 +89,49 @@
         </div>
 
         <div v-if="doctorSignUpWindow">
-          <div style="height: 50%">
+          <div style="height: 20%">
             <el-row>
-              <el-col span="11">
-                <el-form-item label="姓名：" style="margin-bottom: 2px;" size="mini">
+              <el-col span="6">
+                <el-form-item label="姓名：" style="margin-bottom: 2px;" size="mini" required>
                   <el-input v-model="doctorName" placeholder="请输入诊所名"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col span="2">
+              <el-col span="12">
                 <div></div>
               </el-col>
-              <el-col span="11">
-                <el-form-item label="科室：" style="margin-bottom: 2px;" size="mini">
+              <el-col span="6">
+                <el-form-item label="科室：" style="margin-bottom: 2px;" size="mini" required>
                   <el-input v-model="doctorDepartment" placeholder="请输入科室"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
-              <el-col span="11">
-                <el-form-item label="性别：" style="margin-bottom: 2px;" size="mini">
+              <el-col span="6">
+                <el-form-item label="性别：" style="margin-bottom: 2px;" size="mini" required>
                   <el-input v-model="sex" placeholder="请输入性别"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col span="2">
+              <el-col span="12">
                 <div></div>
               </el-col>
-              <el-col span="11">
-                <el-form-item label="年龄：" style="margin-bottom: 2px;" size="mini">
+              <el-col span="6">
+                <el-form-item label="年龄：" style="margin-bottom: 2px;" size="mini" required>
                   <el-input v-model="age" placeholder="请输入年龄"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
           </div>
 
-          <div style="height: 50%;margin-top: 5px;width: 95%">
+          <div>
             <el-table
+              size="mini"
               :data="tableData"
               stripe
               border
+              empty-text="加载中"
               highlight-current-row
-              @current-change="singleclickrow">
+              @current-change="singleclickrow"
+              style="height: 70%;margin-top: 5px;">
               <el-table-column>
                 <template slot="header" slot-scope="scope">
                   <div style="width: 15%;float: left">
@@ -160,25 +163,25 @@
                   sortable
                   prop="name"
                   label="名称"
-                  width="180">
+                  min-width="19%">
                 </el-table-column>
                 <el-table-column
                   sortable
                   prop="department"
                   label="科室"
-                  width="180">
+                  min-width="19%">
                 </el-table-column>
                 <el-table-column
                   sortable
                   prop="address"
                   label="地址"
-                  width="180">
+                  min-width="19%">
                 </el-table-column>
                 <el-table-column
                   sortable
                   prop="phoneNum"
                   label="联系电话"
-                  width="180">
+                  min-width="19%">
                 </el-table-column>
               </el-table-column>
             </el-table>

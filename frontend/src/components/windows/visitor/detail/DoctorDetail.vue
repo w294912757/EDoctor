@@ -44,7 +44,7 @@
     >
 
     </el-image>
-
+    <el-button @click="goback" type="button">返回</el-button>
   </div>
 </template>
 
@@ -60,6 +60,11 @@
         department: '',
         sex: '',
         age: '',
+      }
+    },
+    methods: {
+      goback() {
+        this.$router.go(-1);
       }
     },
     created() {
@@ -96,22 +101,7 @@
         this.photos = response.data.photos;
       }.bind(this));
     }, methods: {
-      changeAuthority: function (changeTo) {
-        let params = new FormData();
-        let doctorId = this.$route.params.doctorId;
-        let operatorId = this.$cookies.get('operatorId');
-        params.append('id', doctorId);
-        params.append('usertype', '2');
-        params.append('operatorId', operatorId);
-        params.append('changeTo', changeTo);
-        this.$axios({
-          method: 'post',
-          url: '/api/change_user_authority/',
-          data: params
-        }).then(function (response) {
-          this.$router.go(-1);
-        }.bind(this));
-      }
+
     }
   }
 </script>

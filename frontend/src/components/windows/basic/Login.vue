@@ -51,9 +51,16 @@
             let checkCode = response.data.checkCode;
             console.log(response);
             if (checkCode === '2') {
-              let title = response.data.title;
-              this.$cookies.set('title', title);
-              this.$router.push({path: '/default'});
+              let usertype = this.$cookies.get('usertype')
+              if (usertype == '1') {
+                this.$router.push({path: '/clinicdefault'});
+              } else if (usertype == '2') {
+                this.$router.push({path: '/doctordefault'});
+              } else if (usertype == '3') {
+                this.$router.push({path: '/rootdefault'});
+              }
+
+
             } else if (checkCode === '1') {
               this.message = '该用户不存在，请注册！';
             } else if (checkCode === '3') {
@@ -69,7 +76,8 @@
 
 <style scoped>
   #loginwindow {
-    height: 100%;
-    background-color: red;
+    height: 80%;
+    width: 50vw;
+    background-color: yellow;
   }
 </style>

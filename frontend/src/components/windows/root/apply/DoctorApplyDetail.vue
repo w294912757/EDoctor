@@ -8,7 +8,7 @@
               <el-input v-model="name" placeholder="" :disabled="true"></el-input>
             </el-form-item>
           </el-col>
-          <el-col span="16">
+          <el-col span="8">
             <el-form-item label="所属诊所：" style="margin-bottom: 2px;" size="mini">
               <el-input v-model="clinicName" placeholder="" :disabled="true"></el-input>
             </el-form-item>
@@ -20,7 +20,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col span="11">
+          <el-col span="4">
             <el-form-item label="性别：" style="margin-bottom: 2px;" size="mini">
               <el-input v-model="sex" placeholder="" :disabled="true"></el-input>
             </el-form-item>
@@ -28,7 +28,7 @@
           <el-col span="2">
             <div></div>
           </el-col>
-          <el-col span="11">
+          <el-col span="4">
             <el-form-item label="年龄：" style="margin-bottom: 2px;" size="mini">
               <el-input v-model="age" placeholder="" :disabled="true"></el-input>
             </el-form-item>

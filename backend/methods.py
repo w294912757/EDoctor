@@ -1,9 +1,9 @@
 import base64
 import json
 import os
-
+import numpy as np
 from django.core import serializers
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 
 from EDoctor import settings
 from backend.models import *
@@ -37,10 +37,11 @@ def login_method(username, password):
                 title = User.objects.get(id=operatorId).username
             UserLog.objects.create(dataId=operatorId, operationType='login', originData='', resultData='',
                                    operatorId=operatorId)
-            rst = {'checkCode': '2', 'title': title}
+            rst = {'checkCode': '2'}
             response = JsonResponse(rst)
             response.set_cookie('operatorId', operatorId)
             response.set_cookie('usertype', usertype)
+            response.set_cookie('title', title)
             if usertype == '1':
                 response.set_cookie('clinicId', userId)
             elif usertype == '2':
@@ -486,6 +487,7 @@ def show_doctor_method(status):
             doctor['userId'] = i.userId.id
             doctor['clinicId'] = i.clinicId.id
             doctor['clinicName'] = i.clinicId.name
+            data.append(doctor)
 
     return JsonResponse({'message': '查询成功', 'data': data})
 
@@ -686,19 +688,13 @@ def alter_doctor_method(id, name, department, sex, age, userId, clinicId, operat
 
 
 def add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId,
-                            photos):
+                            ):
     doctor = Doctor.objects.get(id=doctorId)
     Prescription.objects.create(patientName=patientName, sex=sex, age=age, phoneNum=phoneNum, diagnosis=diagnosis,
                                 feature=feature, treatment=treatment, doctorId=doctor)
     latestPrescriptionId = Prescription.objects.latest('id').id
     photoPath = os.path.join(settings.UPLOAD_FILE, 'prescriptions', str(latestPrescriptionId))
     os.makedirs(photoPath)
-    for photo in photos:
-        imageFilename = os.path.join(photoPath, photo.name)
-        f = open(imageFilename, 'wb')
-        for i in photo.chunks():
-            f.write(i)
-        f.close()
 
     resultData = 'patientName:' + patientName + ' sex:' + sex + ' age:' + age + ' phoneNum:' + phoneNum + ' diagnosis:' + diagnosis + ' feature:' + feature + ' treatment:' + treatment + ' doctorId:' + doctorId
     PrescriptionLog.objects.create(dataId=latestPrescriptionId, operationType='add', originData='',
@@ -1088,3 +1084,15 @@ def change_user_authority_method(id, usertype, operatorId, changeTo):
     user.authorized = changeTo
     user.save()
     return JsonResponse({'message': '更改授权情况成功'})
+
+
+def date_type_statistic_method(date, type):
+    if type == '1':
+        #day需要+1
+        prescriptions = Prescription.objects.filter(createTime__day=3)
+        print(prescriptions)
+    elif type == '2':
+        print(2)
+    elif type == '4':
+        print(4)
+    return JsonResponse({'data': ''})

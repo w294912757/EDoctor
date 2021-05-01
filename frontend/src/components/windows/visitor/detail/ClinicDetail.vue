@@ -33,6 +33,8 @@
       </el-form>
     </div>
 
+    <el-button @click="goback" type="button">返回</el-button>
+
     <el-image v-for="photo in photos"
               :src="photo"
               style="width: 10vw;height: 15vh;display: block"
@@ -53,6 +55,11 @@
         address: '',
         department: '',
         phoneNum: '',
+      }
+    },
+    methods: {
+      goback() {
+        this.$router.go(-1);
       }
     },
     created() {
@@ -87,22 +94,7 @@
         this.photos = response.data.photos;
       }.bind(this));
     }, methods: {
-      changeAuthority: function (changeTo) {
-        let params = new FormData();
-        let clinicId = this.$route.params.clinicId;
-        let operatorId = this.$cookies.get('operatorId');
-        params.append('id', clinicId);
-        params.append('usertype', '1');
-        params.append('operatorId', operatorId);
-        params.append('changeTo', changeTo);
-        this.$axios({
-          method: 'post',
-          url: '/api/change_user_authority/',
-          data: params
-        }).then(function (response) {
-          this.$router.go(-1);
-        }.bind(this));
-      }
+
     }
   }
 </script>

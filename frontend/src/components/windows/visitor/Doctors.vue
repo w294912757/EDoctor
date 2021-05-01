@@ -4,6 +4,7 @@
       :data="tableData"
       stripe
       border
+      empty-text="加载中"
       height="100%"
       width="100%"
       @row-dblclick="doubleclickrow">
@@ -43,31 +44,31 @@
           sortable
           prop="name"
           label="姓名"
-          width="180">
+          min-width="19%">
         </el-table-column>
         <el-table-column
           sortable
           prop="clinicName"
           label="单位"
-          width="180">
+          min-width="19%">
         </el-table-column>
         <el-table-column
           sortable
           prop="department"
           label="科室"
-          width="180">
+          min-width="19%">
         </el-table-column>
         <el-table-column
           sortable
           prop="sex"
           label="性别"
-          width="180">
+          min-width="19%">
         </el-table-column>
         <el-table-column
           sortable
           prop="age"
           label="年龄"
-          width="180">
+          min-width="19%">
         </el-table-column>
       </el-table-column>
     </el-table>

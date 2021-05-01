@@ -6,6 +6,7 @@
       border
       height="100%"
       width="100%"
+      empty-text="加载中"
       @row-dblclick="doubleclickrow">
       <el-table-column
         sortable

@@ -25,5 +25,5 @@ urlpatterns = [
     path('alter_prescription/', views.alter_prescription),
     path('get_image/', views.get_image),
     path('change_user_authority/', views.change_user_authority),
-
+    path('date_type_statistic/', views.date_type_statistic),
 ]

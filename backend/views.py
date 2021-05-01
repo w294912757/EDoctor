@@ -59,7 +59,7 @@ def delete_clinic(request):
 
 
 def show_clinic(request):
-    status = request.POST.get('status', '2')
+    status = request.POST.get('status', '')
     return show_clinic_method(status)
 
 
@@ -99,7 +99,7 @@ def delete_doctor(request):
 
 
 def show_doctor(request):
-    status = request.POST.get('status', '2')
+    status = request.POST.get('status', '')
     return show_doctor_method(status)
 
 
@@ -132,9 +132,8 @@ def add_prescription(request):
     treatment = request.POST.get('treatment', '')
     doctorId = request.POST.get('doctorId', '')
     operatorId = request.POST.get('operatorId', '')
-    photos = request.FILES.getlist('photos')
     return add_prescription_method(patientName, sex, age, phoneNum, diagnosis, feature, treatment, doctorId, operatorId,
-                                   photos)
+                                   )
 
 
 def delete_prescription(request):
@@ -183,3 +182,13 @@ def change_user_authority(request):
     operatorId = request.POST.get('operatorId', '')
     changeTo = request.POST.get('changeTo', '')
     return change_user_authority_method(id, usertype, operatorId, changeTo)
+
+
+def date_type_statistic(request):
+    date1 = request.POST.get('date1', '')
+    date2 = request.POST.get('date2', '')
+    type = request.POST.get('type', '')
+    date1 = date1.split('-')
+    date2 = date2.split('-')
+    date = np.array([date1, date2])
+    return date_type_statistic_method(date, type)

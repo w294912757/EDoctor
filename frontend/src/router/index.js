@@ -18,6 +18,10 @@ import AllPrescriptions from "../components/windows/doctor/AllPrescriptions";
 import PrescriptionDetail from "../components/windows/doctor/PrescriptionDetail";
 import Clinic2Doctors from "../components/windows/clinic/Clinic2Doctors";
 import Clinic2Prescriptions from "../components/windows/clinic/Clinic2Prescriptions";
+import PrescriptionStatistics from "../components/windows/doctor/PrescriptionStatistics";
+import DoctorDefault from "../components/windows/doctor/DoctorDefault";
+import ClinicDefault from "../components/windows/clinic/ClinicDefault";
+import RootDefault from "../components/windows/root/RootDefault";
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -96,6 +100,22 @@ const routes = [
         path: '/clinic2doctors',
         name: 'clinic2doctors',
         component: Clinic2Doctors
+      }, {
+        path: '/prescriptionstatistics',
+        name: 'prescriptionstatistics',
+        component: PrescriptionStatistics
+      }, {
+        path: '/clinicdefault',
+        name: 'clinicdefault',
+        component: ClinicDefault
+      }, {
+        path: '/doctordefault',
+        name: 'doctordefault',
+        component: DoctorDefault
+      }, {
+        path: '/rootdefault',
+        name: 'rootdefault',
+        component: RootDefault
       }
     ]
   }

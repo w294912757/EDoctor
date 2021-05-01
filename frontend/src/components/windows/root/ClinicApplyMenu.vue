@@ -4,6 +4,7 @@
       :data="tableData"
       stripe
       border
+      empty-text="加载中"
       height="100%"
       width="100%"
       @row-dblclick="doubleclickrow">
