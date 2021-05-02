@@ -15,25 +15,7 @@
         frequency: ''
       }
     },
-    methods: {
-      drawline() {
-        let myChart = this.$echarts.getInstanceByDom(document.getElementById('myChart'));
-        myChart.setOption({
-          title: {text: '今日诊所就诊人次排名'},
-          tooltip: {},
-          xAxis: {
-            data: this.clinicsname
-          },
-          yAxis: {},
-          series: [{
-            name: '人次',
-            type: 'bar',
-            data: this.frequency
-          }],
-        });
-        myChart.hideLoading();
-      }
-    },
+    methods: {},
     created() {
     },
     mounted() {
@@ -57,7 +39,20 @@
         this.clinicsid = data.clinicsid;
         this.clinicsname = data.clinicsname;
         this.frequency = data.frequency;
-        this.drawline();
+        myChart.setOption({
+          title: {text: '今日诊所就诊人次排名'},
+          tooltip: {},
+          xAxis: {
+            data: this.clinicsname
+          },
+          yAxis: {},
+          series: [{
+            name: '人次',
+            type: 'bar',
+            data: this.frequency
+          }],
+        });
+        myChart.hideLoading();
       }.bind(this));
     }
 
