@@ -9,50 +9,56 @@
   export default {
     name: "Default",
     data() {
-      return {}
+      return {
+        clinicsname: '',
+        clinicsid: '',
+        frequency: ''
+      }
     },
     methods: {
-      drawLine() {
-        // 基于准备好的dom，初始化echarts实例
-        let myChart = this.$echarts.init(document.getElementById('myChart'))
-        // 绘制图表
+      drawline() {
+        let myChart = this.$echarts.getInstanceByDom(document.getElementById('myChart'));
         myChart.setOption({
           title: {text: '今日诊所就诊人次排名'},
           tooltip: {},
           xAxis: {
-            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+            data: this.clinicsname
           },
           yAxis: {},
           series: [{
-            name: '销量',
+            name: '人次',
             type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
-          }]
+            data: this.frequency
+          }],
         });
+        myChart.hideLoading();
       }
     },
     created() {
+    },
+    mounted() {
+      let myChart = this.$echarts.init(document.getElementById('myChart'));
+      myChart.showLoading({text: '正在加载数据'});
       let date = new Date();
       let year = date.getFullYear();
       let month = date.getMonth() + 1;
       let day = date.getDate();
-      let currentdate = year+'-'+month+'-'+day;
-      console.log(typeof currentdate);
+      let currentdate = year + '-' + month + '-' + day;
       let params = new FormData();
       params.append('date1', currentdate);
       params.append('date2', currentdate);
-      params.append('type', '1');
+      params.append('type', 'mostclinictoday');
       this.$axios({
         method: 'post',
         url: '/api/date_type_statistic/',
         data: params
       }).then(function (response) {
-        let checkCode = response.data;
-        console.log(response);
+        let data = response.data;
+        this.clinicsid = data.clinicsid;
+        this.clinicsname = data.clinicsname;
+        this.frequency = data.frequency;
+        this.drawline();
       }.bind(this));
-    },
-    mounted() {
-      this.drawLine();
     }
 
   }

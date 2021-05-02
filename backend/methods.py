@@ -1,6 +1,9 @@
-import base64
 import json
 import os
+from datetime import datetime
+
+from django.utils import timezone
+import pytz
 import numpy as np
 from django.core import serializers
 from django.http import JsonResponse
@@ -37,11 +40,9 @@ def login_method(username, password):
                 title = User.objects.get(id=operatorId).username
             UserLog.objects.create(dataId=operatorId, operationType='login', originData='', resultData='',
                                    operatorId=operatorId)
-            rst = {'checkCode': '2'}
-            response = JsonResponse(rst)
+            response = JsonResponse({'checkCode': '2', 'title': title})
             response.set_cookie('operatorId', operatorId)
             response.set_cookie('usertype', usertype)
-            response.set_cookie('title', title)
             if usertype == '1':
                 response.set_cookie('clinicId', userId)
             elif usertype == '2':
@@ -1087,10 +1088,35 @@ def change_user_authority_method(id, usertype, operatorId, changeTo):
 
 
 def date_type_statistic_method(date, type):
-    if type == '1':
-        #day需要+1
-        prescriptions = Prescription.objects.filter(createTime__day=3)
-        print(prescriptions)
+    # day需要+1
+    if type == 'mostclinictoday':
+        # 今日接诊人次最多的诊所
+        currentday = int(date[0][2] + 1)
+        prescriptions = Prescription.objects.filter(
+            Q(createTime__year=date[0][0]) & Q(createTime__month=date[0][1]) & Q(createTime__day=currentday)).order_by(
+            'doctorId__clinicId')
+        clinicsid = []
+        clinicsname = []
+        frequency = []
+        clinicsid.append(prescriptions[0].doctorId.clinicId.id)
+        clinicsname.append(prescriptions[0].doctorId.clinicId.name)
+        frequency.append(1)
+        for i in range(1, prescriptions.count()):
+            last = len(clinicsid) - 1
+            lastclinicid = clinicsid[last]
+            clinicid = prescriptions[i].doctorId.clinicId.id
+            clinicname = prescriptions[i].doctorId.clinicId.name
+            if clinicid == lastclinicid:
+                frequency[last] = frequency[last] + 1
+            else:
+                clinicsid.append(prescriptions[i].doctorId.clinicId.id)
+                clinicsname.append(prescriptions[i].doctorId.clinicId.name)
+                frequency.append(1)
+            # 显示前5位
+            if len(frequency) > 4:
+                break
+        return JsonResponse(
+            {'message': '今日接诊人次最多诊所', 'clinicsid': clinicsid, 'clinicsname': clinicsname, 'frequency': frequency})
     elif type == '2':
         print(2)
     elif type == '4':

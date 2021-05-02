@@ -145,6 +145,7 @@
                 || data.phoneNum.toLowerCase().includes(search.toLowerCase())
             );
           } else if (this.value == 'name') {
+
             this.tableData = this.allClinics.filter(
               (data) =>
                 !search || data.name.toLowerCase().includes(search.toLowerCase())

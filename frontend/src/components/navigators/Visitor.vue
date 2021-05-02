@@ -6,6 +6,10 @@
       @close="handleClose"
       router
     >
+      <el-menu-item index="/default">
+        <i class="el-icon-menu"></i>
+        <span slot="title">主页</span>
+      </el-menu-item>
       <el-menu-item index="/login">
         <i class="el-icon-menu"></i>
         <span slot="title">登录/注册</span>

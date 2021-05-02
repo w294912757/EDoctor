@@ -1,8 +1,7 @@
+import csv
+
 import jieba
 from collections import Counter
-import csv
-import pandas as pd
-import pymysql
 
 
 def analyse_words(prescriptions):
@@ -16,8 +15,10 @@ def analyse_words(prescriptions):
     print(count.most_common())
 
 
-db = pymysql.connect(host='112.124.56.37', port=3306, user='root', passwd='123456', db='edoctor', charset='utf8')
-cursor = db.cursor()
+# 链接数据库
+# db = pymysql.connect(host='112.124.56.37', port=3306, user='root', passwd='123456', db='edoctor', charset='utf8')
+# cursor = db.cursor()
+
 # 分析
 # sql = "select * from backend_prescription"
 # cursor.execute(sql)
@@ -34,14 +35,18 @@ cursor = db.cursor()
 #         # cursor.execute(sql)
 #         # db.commit()
 #         disease.append(i[0])
-# name =["name"]
-# test =pd.DataFrame(columns=name,data=disease)
-# test.to_csv('./disease.csv')
+# try:
+#     fp = open('./disease.txt', "w+", encoding="utf-8")
+#     for item in disease:
+#         fp.write(str(item) + "\n")
+#     fp.close()
+# except IOError:
+#     print("fail to open file")
 
-# 加入词典
-dic = csv.reader(open("./disease.csv", "r", encoding='utf8'))
-dic_list = list(dic)
-print(dic_list)
-for row in dic_list:
-    jieba.add_word(row[1].strip())
-    jieba.suggest_freq(row[1].strip(), tune=True)
+#加入词典
+# dic = open("./disease.txt", "r", encoding='utf8')
+# dic_list = list(dic)
+# for row in dic_list:
+#     print(row)
+#     jieba.add_word(row.strip())
+#     jieba.suggest_freq(row.strip(), tune=True)

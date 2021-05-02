@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'd$cct^ovqgw31ji9pm&bznm_+(k2u$6ysd!#b8&@5_=nfyd13b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-#部署时设置为False
+DEBUG = False
+# 部署时设置为False
 
 ALLOWED_HOSTS = ['*']
 
@@ -75,8 +75,6 @@ TEMPLATES = [
     },
 ]
 
-
-
 WSGI_APPLICATION = 'EDoctor.wsgi.application'
 
 # Database
@@ -90,7 +88,6 @@ DATABASES = {
         'PASSWORD': '123456',  # 密码
         'HOST': '112.124.56.37',  # HOST
         'POST': 3306,  # 端口
-
     }
 }
 
@@ -119,7 +116,6 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Shanghai'
 
-
 USE_I18N = True
 
 USE_L10N = True
@@ -133,7 +129,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/static"),

@@ -49,6 +49,8 @@
             data: params
           }).then(function (response) {
             let checkCode = response.data.checkCode;
+            let title = response.data.title;
+            this.$cookies.set('title', title);
             console.log(response);
             if (checkCode === '2') {
               let usertype = this.$cookies.get('usertype')
@@ -59,8 +61,6 @@
               } else if (usertype == '3') {
                 this.$router.push({path: '/rootdefault'});
               }
-
-
             } else if (checkCode === '1') {
               this.message = '该用户不存在，请注册！';
             } else if (checkCode === '3') {
