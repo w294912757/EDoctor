@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'backend',
-    'frontend'
+    #'frontend'
 ]
+
+#部署时不要注册frontend
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
