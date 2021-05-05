@@ -21,6 +21,15 @@
       </el-option>
     </el-select>
 
+    <el-select v-model="selectvalue2" placeholder="请选择医生" @change=changevalue2>
+      <el-option
+        v-for="item in options2"
+        :key="item.value2"
+        :label="item.label2"
+        :value="item.value2">
+      </el-option>
+    </el-select>
+
     <el-button @click="statistic">统计</el-button>
     <div id="myChart" :style="{width: '400px', height: '300px'}"></div>
   </div>
@@ -53,6 +62,10 @@
         }],
 
         selectvalue: '',
+
+        options2: [{}],
+
+        selectvalue2: '',
 
         pickerOptions: {
           shortcuts: [{
@@ -90,7 +103,8 @@
         },
         timevalue: '',
 
-        label: ''
+        label: '',
+        label2: ''
       }
     },
     methods: {
@@ -99,7 +113,17 @@
         obj = this.options.find((item) => {
           return item.value === value;
         });
-        this.label = obj.label
+        this.label = obj.label;
+      },
+
+      changevalue2(value) {
+        let obj = {};
+        obj = this.options2.find((item) => {
+          return item.value2 === value;
+        });
+        this.label2 = obj.label2;
+        console.log(this.label2);
+        console.log(this.selectvalue2);
       },
 
       statistic() {
@@ -136,6 +160,26 @@
       }
     },
     created() {
+      let params = new FormData();
+      params.append('searchtype', 'clinicId');
+      params.append('keyword', this.$cookies.get('clinicId'));
+      params.append('operatorId', this.$cookies.get('operatorId'));
+      this.$axios({
+        method: 'post',
+        url: '/api/query_doctor/',
+        data: params
+      }).then(function (response) {
+        let data = response.data;
+        console.log(data);
+        console.log(data.data);
+        for (var i in data.data) {
+          let item = {
+            "value2": i.id,
+            "label2": i.name
+          }
+          this.options2.push(item);
+        }
+      }.bind(this));
     },
     mounted() {
     }
