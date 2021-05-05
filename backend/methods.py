@@ -1,7 +1,10 @@
 import json
+import math
 import os
-from datetime import datetime
+import datetime
+from collections import Counter
 
+import jieba
 from django.utils import timezone
 import pytz
 import numpy as np
@@ -940,10 +943,7 @@ def query_prescription_method(keyword, searchtype, operatorId):
         else:
             return JsonResponse({'message': '查询的数据不存在'})
     if searchtype == 'clinicId':
-        doctors = Doctor.objects.filter(clinicId=keyword)
-        result = []
-        for doctor in doctors:
-            result.append(Prescription.objects.get(doctorId=doctor.id))
+        result = Prescription.objects.filter(doctorId__clinicId=keyword)
         if result:
             data = []
             for i in result:
@@ -1087,39 +1087,261 @@ def change_user_authority_method(id, usertype, operatorId, changeTo):
     return JsonResponse({'message': '更改授权情况成功'})
 
 
-def date_type_statistic_method(date, type):
+def date_type_statistic_method(date, userid, operatortype, statistictype):
     # day需要+1
-    if type == 'mostclinictoday':
-        # 今日接诊人次最多的诊所
-        currentday = int(date[0][2] + 1)
-        prescriptions = Prescription.objects.filter(
-            Q(createTime__year=date[0][0]) & Q(createTime__month=date[0][1]) & Q(createTime__day=currentday)).order_by(
-            'doctorId__clinicId')
-        if prescriptions:
-            clinicsid = []
-            clinicsname = []
+    if operatortype == 'visitor':
+        if statistictype == 'mostclinictoday':
+            # 今日接诊人次最多的诊所
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(createTime__range=(date_from, date_to)).order_by(
+                'doctorId__clinicId')
+            if prescriptions:
+                clinicsid = []
+                clinicsname = []
+                frequency = []
+                clinicsid.append(prescriptions[0].doctorId.clinicId.id)
+                clinicsname.append(prescriptions[0].doctorId.clinicId.name)
+                frequency.append(1)
+                for i in range(1, prescriptions.count()):
+                    last = len(clinicsid) - 1
+                    lastclinicid = clinicsid[last]
+                    clinicid = prescriptions[i].doctorId.clinicId.id
+                    clinicname = prescriptions[i].doctorId.clinicId.name
+                    if clinicid == lastclinicid:
+                        frequency[last] = frequency[last] + 1
+                    else:
+                        clinicsid.append(clinicid)
+                        clinicsname.append(clinicname)
+                        frequency.append(1)
+                    # 显示前5位
+                    if len(frequency) > 4:
+                        break
+                return JsonResponse(
+                    {'message': '今日接诊人次最多诊所', 'hiddenxdata': clinicsid, 'xdata': clinicsname,
+                     'ydata': frequency})
+    if operatortype == 'doctor':
+        if statistictype == 'sex':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'sex')
+            if prescriptions:
+                sextype = []
+                frequency = []
+                sextype.append(prescriptions[0].sex)
+                frequency.append(1)
+                for i in range(1, prescriptions.count()):
+                    last = len(sextype) - 1
+                    lastsex = sextype[last]
+                    sex = prescriptions[i].sex
+                    if sex == lastsex:
+                        frequency[last] = frequency[last] + 1
+                    else:
+                        sextype.append(sex)
+                        frequency.append(1)
+                    # 显示前5位
+                    if len(frequency) > 4:
+                        break
+                return JsonResponse(
+                    {'message': '统计结果',
+                     'hiddenxdata': '', 'xdata': sextype,
+                     'ydata': frequency})
+        if statistictype == 'age':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'age')
+            if prescriptions:
+                agefloor = math.floor(int(prescriptions[0].age))
+                ages = []
+                frequency = []
+                frequency.append(1)
+                ages.append(str(agefloor) + '-' + str(agefloor + 5))
+                tempage = agefloor
+                for i in range(1, prescriptions.count()):
+                    last = len(ages) - 1
+                    if int(prescriptions[i].age) >= tempage and int(prescriptions[i].age) < (tempage + 5):
+                        frequency[last] = frequency[last] + 1
+                    else:
+                        tempage = tempage + 5
+                        ages.append(str(tempage) + '-' + str(tempage + 5))
+                        frequency.append(1)
+                return JsonResponse(
+                    {'message': '统计结果',
+                     'hiddenxdata': '', 'xdata': ages,
+                     'ydata': frequency})
+        if statistictype == 'feature':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'feature')
+            results = analyse_words(prescriptions, 'prescription', 'feature')
             frequency = []
-            clinicsid.append(prescriptions[0].doctorId.clinicId.id)
-            clinicsname.append(prescriptions[0].doctorId.clinicId.name)
-            frequency.append(1)
-            for i in range(1, prescriptions.count()):
-                last = len(clinicsid) - 1
-                lastclinicid = clinicsid[last]
-                clinicid = prescriptions[i].doctorId.clinicId.id
-                clinicname = prescriptions[i].doctorId.clinicId.name
-                if clinicid == lastclinicid:
-                    frequency[last] = frequency[last] + 1
-                else:
-                    clinicsid.append(prescriptions[i].doctorId.clinicId.id)
-                    clinicsname.append(prescriptions[i].doctorId.clinicId.name)
-                    frequency.append(1)
-                # 显示前5位
-                if len(frequency) > 4:
-                    break
+            feature = []
+            for result in results:
+                feature.append(result[0])
+                frequency.append(result[1])
             return JsonResponse(
-                {'message': '今日接诊人次最多诊所', 'clinicsid': clinicsid, 'clinicsname': clinicsname, 'frequency': frequency})
-    elif type == '2':
-        print(2)
-    elif type == '4':
-        print(4)
-    return JsonResponse({'message': '今日接诊人次最多诊所', 'clinicsid': '', 'clinicsname': '', 'frequency': ''})
+                {'message': '统计结果',
+                 'hiddenxdata': '', 'xdata': feature,
+                 'ydata': frequency})
+        if statistictype == 'diagnosis':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'diagnosis')
+            results = analyse_words(prescriptions, 'prescription', 'diagnosis')
+            frequency = []
+            diagnosis = []
+            for result in results:
+                diagnosis.append(result[0])
+                frequency.append(result[1])
+            return JsonResponse(
+                {'message': '统计结果',
+                 'hiddenxdata': '', 'xdata': diagnosis,
+                 'ydata': frequency})
+        if statistictype == 'treatment':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'treatment')
+            results = analyse_words(prescriptions, 'prescription', 'treatment')
+            frequency = []
+            treatment = []
+            for result in results:
+                treatment.append(result[0])
+                frequency.append(result[1])
+            return JsonResponse(
+                {'message': '统计结果',
+                 'hiddenxdata': '', 'xdata': treatment,
+                 'ydata': frequency})
+    if operatortype == 'clinic':
+        if statistictype == 'sex':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'sex')
+            if prescriptions:
+                sextype = []
+                frequency = []
+                sextype.append(prescriptions[0].sex)
+                frequency.append(1)
+                for i in range(1, prescriptions.count()):
+                    last = len(sextype) - 1
+                    lastsex = sextype[last]
+                    sex = prescriptions[i].sex
+                    if sex == lastsex:
+                        frequency[last] = frequency[last] + 1
+                    else:
+                        sextype.append(sex)
+                        frequency.append(1)
+                    # 显示前5位
+                    if len(frequency) > 4:
+                        break
+                return JsonResponse(
+                    {'message': '统计结果',
+                     'hiddenxdata': '', 'xdata': sextype,
+                     'ydata': frequency})
+        if statistictype == 'age':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'age')
+            if prescriptions:
+                agefloor = math.floor(int(prescriptions[0].age))
+                ages = []
+                frequency = []
+                frequency.append(1)
+                ages.append(str(agefloor) + '-' + str(agefloor + 5))
+                tempage = agefloor
+                for i in range(1, prescriptions.count()):
+                    last = len(ages) - 1
+                    if int(prescriptions[i].age) >= tempage and int(prescriptions[i].age) < (tempage + 5):
+                        frequency[last] = frequency[last] + 1
+                    else:
+                        tempage = tempage + 5
+                        ages.append(str(tempage) + '-' + str(tempage + 5))
+                        frequency.append(1)
+                return JsonResponse(
+                    {'message': '统计结果',
+                     'hiddenxdata': '', 'xdata': ages,
+                     'ydata': frequency})
+        if statistictype == 'feature':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'feature')
+            results = analyse_words(prescriptions, 'prescription', 'feature')
+            frequency = []
+            feature = []
+            for result in results:
+                feature.append(result[0])
+                frequency.append(result[1])
+            return JsonResponse(
+                {'message': '统计结果',
+                 'hiddenxdata': '', 'xdata': feature,
+                 'ydata': frequency})
+        if statistictype == 'diagnosis':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'diagnosis')
+            results = analyse_words(prescriptions, 'prescription', 'diagnosis')
+            frequency = []
+            diagnosis = []
+            for result in results:
+                diagnosis.append(result[0])
+                frequency.append(result[1])
+            return JsonResponse(
+                {'message': '统计结果',
+                 'hiddenxdata': '', 'xdata': diagnosis,
+                 'ydata': frequency})
+        if statistictype == 'treatment':
+            date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
+            date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
+            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+                createTime__range=(date_from, date_to)).order_by(
+                'treatment')
+            results = analyse_words(prescriptions, 'prescription', 'treatment')
+            frequency = []
+            treatment = []
+            for result in results:
+                treatment.append(result[0])
+                frequency.append(result[1])
+            return JsonResponse(
+                {'message': '统计结果',
+                 'hiddenxdata': '', 'xdata': treatment,
+                 'ydata': frequency})
+    return JsonResponse({'message': '', 'hiddenxdata': '', 'xdata': '', 'ydata': ''})
+
+
+def analyse_words(set, datatype, wordtype):
+    count = Counter()
+    for data in set:
+        if datatype == 'prescription':
+            if wordtype == 'diagnosis':
+                result = jieba.cut(data.diagnosis, cut_all=False, HMM=False)
+                for i in result:
+                    if len(i) > 1 and i != '\r\n':
+                        count[i] += 1
+            if wordtype == 'feature':
+                result = jieba.cut(data.feature, cut_all=False, HMM=False)
+                for i in result:
+                    if len(i) > 1 and i != '\r\n':
+                        count[i] += 1
+            if wordtype == 'treatment':
+                result = jieba.cut(data.treatment, cut_all=False, HMM=False)
+                for i in result:
+                    if len(i) > 1 and i != '\r\n':
+                        count[i] += 1
+    return count.most_common()

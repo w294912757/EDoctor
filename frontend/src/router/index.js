@@ -22,6 +22,7 @@ import PrescriptionStatistics from "../components/windows/doctor/PrescriptionSta
 import DoctorDefault from "../components/windows/doctor/DoctorDefault";
 import ClinicDefault from "../components/windows/clinic/ClinicDefault";
 import RootDefault from "../components/windows/root/RootDefault";
+import ClinicStatistics from "../components/windows/clinic/ClinicStatistics";
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -116,6 +117,10 @@ const routes = [
         path: '/rootdefault',
         name: 'rootdefault',
         component: RootDefault
+      }, {
+        path: '/clinicstatistics',
+        name: 'clinicstatistics',
+        component: ClinicStatistics
       }
     ]
   }

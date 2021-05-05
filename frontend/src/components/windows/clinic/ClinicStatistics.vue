@@ -28,7 +28,7 @@
 
 <script>
   export default {
-    name: "PrescriptionStatistics",
+    name: "ClinicStatistics",
     data() {
       return {
         xdata: '',
@@ -107,8 +107,8 @@
         let params = new FormData();
         params.append('date1', this.timevalue[0]);
         params.append('date2', this.timevalue[1]);
-        params.append('operatortype', 'doctor');
-        params.append('userid', this.$cookies.get('doctorId'));
+        params.append('operatortype', 'clinic');
+        params.append('userid', this.$cookies.get('clinicId'));
         params.append('statistictype', this.selectvalue);
         this.charttext = this.timevalue[0] + '至' + this.timevalue[1] + ' ' + this.label + '统计';
         this.$axios({

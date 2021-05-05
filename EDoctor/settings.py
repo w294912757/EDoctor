@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import jieba
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -38,10 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'backend',
-    #'frontend'
+    # 'frontend'
 ]
 
-#部署时不要注册frontend
+# 部署时不要注册frontend
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -122,7 +124,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -142,3 +144,10 @@ UPLOAD_FILE = os.path.join(BASE_DIR, 'images')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+# 加入词典
+dic = open("./disease.txt", "r", encoding='utf8')
+dic_list = list(dic)
+for row in dic_list:
+    jieba.add_word(row.strip())
+    jieba.suggest_freq(row.strip(), tune=True)

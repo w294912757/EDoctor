@@ -1,6 +1,6 @@
 <template>
   <div id="defaultwindow">
-    <div id="myChart" :style="{width: '300px', height: '300px'}"></div>
+    <div id="myChart" :style="{width: '400px', height: '300px'}"></div>
   </div>
 
 </template>
@@ -10,9 +10,9 @@
     name: "Default",
     data() {
       return {
-        clinicsname: '',
-        clinicsid: '',
-        frequency: ''
+        xdata: '',
+        hiddenxdata: '',
+        ydata: '',
       }
     },
     methods: {},
@@ -27,30 +27,28 @@
       let day = date.getDate();
       let currentdate = year + '-' + month + '-' + day;
       let params = new FormData();
-      console.log(currentdate);
       params.append('date1', currentdate);
       params.append('date2', currentdate);
-      params.append('type', 'mostclinictoday');
+      params.append('operatortype', 'visitor');
+      params.append('userid', '0');
+      params.append('statistictype', 'mostclinictoday');
       this.$axios({
         method: 'post',
         url: '/api/date_type_statistic/',
         data: params
       }).then(function (response) {
         let data = response.data;
-        this.clinicsid = data.clinicsid;
-        this.clinicsname = data.clinicsname;
-        this.frequency = data.frequency;
         myChart.setOption({
           title: {text: '今日诊所就诊人次排名'},
           tooltip: {},
           xAxis: {
-            data: this.clinicsname
+            data: data.xdata
           },
           yAxis: {},
           series: [{
             name: '人次',
             type: 'bar',
-            data: this.frequency
+            data: data.ydata
           }],
         });
         myChart.hideLoading();

@@ -51,7 +51,6 @@
             let checkCode = response.data.checkCode;
             let title = response.data.title;
             this.$cookies.set('title', title);
-            console.log(response);
             if (checkCode === '2') {
               let usertype = this.$cookies.get('usertype')
               if (usertype == '1') {
