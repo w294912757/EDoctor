@@ -1095,30 +1095,31 @@ def date_type_statistic_method(date, type):
         prescriptions = Prescription.objects.filter(
             Q(createTime__year=date[0][0]) & Q(createTime__month=date[0][1]) & Q(createTime__day=currentday)).order_by(
             'doctorId__clinicId')
-        clinicsid = []
-        clinicsname = []
-        frequency = []
-        clinicsid.append(prescriptions[0].doctorId.clinicId.id)
-        clinicsname.append(prescriptions[0].doctorId.clinicId.name)
-        frequency.append(1)
-        for i in range(1, prescriptions.count()):
-            last = len(clinicsid) - 1
-            lastclinicid = clinicsid[last]
-            clinicid = prescriptions[i].doctorId.clinicId.id
-            clinicname = prescriptions[i].doctorId.clinicId.name
-            if clinicid == lastclinicid:
-                frequency[last] = frequency[last] + 1
-            else:
-                clinicsid.append(prescriptions[i].doctorId.clinicId.id)
-                clinicsname.append(prescriptions[i].doctorId.clinicId.name)
-                frequency.append(1)
-            # 显示前5位
-            if len(frequency) > 4:
-                break
-        return JsonResponse(
-            {'message': '今日接诊人次最多诊所', 'clinicsid': clinicsid, 'clinicsname': clinicsname, 'frequency': frequency})
+        if prescriptions:
+            clinicsid = []
+            clinicsname = []
+            frequency = []
+            clinicsid.append(prescriptions[0].doctorId.clinicId.id)
+            clinicsname.append(prescriptions[0].doctorId.clinicId.name)
+            frequency.append(1)
+            for i in range(1, prescriptions.count()):
+                last = len(clinicsid) - 1
+                lastclinicid = clinicsid[last]
+                clinicid = prescriptions[i].doctorId.clinicId.id
+                clinicname = prescriptions[i].doctorId.clinicId.name
+                if clinicid == lastclinicid:
+                    frequency[last] = frequency[last] + 1
+                else:
+                    clinicsid.append(prescriptions[i].doctorId.clinicId.id)
+                    clinicsname.append(prescriptions[i].doctorId.clinicId.name)
+                    frequency.append(1)
+                # 显示前5位
+                if len(frequency) > 4:
+                    break
+            return JsonResponse(
+                {'message': '今日接诊人次最多诊所', 'clinicsid': clinicsid, 'clinicsname': clinicsname, 'frequency': frequency})
     elif type == '2':
         print(2)
     elif type == '4':
         print(4)
-    return JsonResponse({'data': ''})
+    return JsonResponse({'message': '今日接诊人次最多诊所', 'clinicsid': '', 'clinicsname': '', 'frequency': ''})

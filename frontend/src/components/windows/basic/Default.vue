@@ -27,6 +27,7 @@
       let day = date.getDate();
       let currentdate = year + '-' + month + '-' + day;
       let params = new FormData();
+      console.log(currentdate);
       params.append('date1', currentdate);
       params.append('date2', currentdate);
       params.append('type', 'mostclinictoday');

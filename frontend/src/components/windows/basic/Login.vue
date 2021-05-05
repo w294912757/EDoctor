@@ -78,6 +78,5 @@
   #loginwindow {
     height: 80%;
     width: 50vw;
-    background-color: yellow;
   }
 </style>

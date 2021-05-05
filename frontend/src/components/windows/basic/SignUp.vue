@@ -401,6 +401,5 @@
 <style scoped>
   #signupwindow {
     height: 100%;
-    background-color: orange;
   }
 </style>

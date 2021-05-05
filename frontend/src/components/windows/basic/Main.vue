@@ -91,7 +91,6 @@
     height: 95vh;
     width: 90vw;
     margin: auto;
-    background-color: #409EFF;
   }
 
   #navigatordiv {
@@ -99,6 +98,6 @@
   }
 
   #routerdiv {
-    height: 84vh;
+    height: 90vh;
   }
 </style>
