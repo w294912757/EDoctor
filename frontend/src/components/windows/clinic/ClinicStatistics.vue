@@ -63,7 +63,10 @@
 
         selectvalue: '',
 
-        options2: [{}],
+        options2: [{
+          value2: '0',
+          label2: '全体医生'
+        }],
 
         selectvalue2: '',
 
@@ -122,8 +125,6 @@
           return item.value2 === value;
         });
         this.label2 = obj.label2;
-        console.log(this.label2);
-        console.log(this.selectvalue2);
       },
 
       statistic() {
@@ -134,6 +135,11 @@
         params.append('operatortype', 'clinic');
         params.append('userid', this.$cookies.get('clinicId'));
         params.append('statistictype', this.selectvalue);
+        params.append('doctorid', this.selectvalue2);
+        if (this.selectvalue2 != 0) {
+          this.charttext = this.timevalue[0] + '至' + this.timevalue[1] + this.label2 + '医生' + this.label + '统计';
+        }
+
         this.charttext = this.timevalue[0] + '至' + this.timevalue[1] + ' ' + this.label + '统计';
         this.$axios({
           method: 'post',
@@ -141,7 +147,6 @@
           data: params
         }).then(function (response) {
           let data = response.data;
-          console.log(data);
           myChart.setOption({
             title: {text: this.charttext},
             tooltip: {},
@@ -170,12 +175,11 @@
         data: params
       }).then(function (response) {
         let data = response.data;
-        console.log(data);
-        console.log(data.data);
-        for (var i in data.data) {
+        let doctors = data.data;
+        for (var i in doctors) {
           let item = {
-            "value2": i.id,
-            "label2": i.name
+            "value2": doctors[i].id,
+            "label2": doctors[i].name
           }
           this.options2.push(item);
         }

@@ -1087,7 +1087,7 @@ def change_user_authority_method(id, usertype, operatorId, changeTo):
     return JsonResponse({'message': '更改授权情况成功'})
 
 
-def date_type_statistic_method(date, userid, operatortype, statistictype):
+def date_type_statistic_method(date, userid, doctorid, operatortype, statistictype):
     # day需要+1
     if operatortype == 'visitor':
         if statistictype == 'mostclinictoday':
@@ -1124,7 +1124,7 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'sex':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+            prescriptions = Prescription.objects.filter(doctorId__id=userid).filter(
                 createTime__range=(date_from, date_to)).order_by(
                 'sex')
             if prescriptions:
@@ -1151,7 +1151,7 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'age':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+            prescriptions = Prescription.objects.filter(doctorId__id=userid).filter(
                 createTime__range=(date_from, date_to)).order_by(
                 'age')
             if prescriptions:
@@ -1176,7 +1176,7 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'feature':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+            prescriptions = Prescription.objects.filter(doctorId__id=userid).filter(
                 createTime__range=(date_from, date_to)).order_by(
                 'feature')
             results = analyse_words(prescriptions, 'prescription', 'feature')
@@ -1192,7 +1192,7 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'diagnosis':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+            prescriptions = Prescription.objects.filter(doctorId__id=userid).filter(
                 createTime__range=(date_from, date_to)).order_by(
                 'diagnosis')
             results = analyse_words(prescriptions, 'prescription', 'diagnosis')
@@ -1208,7 +1208,7 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'treatment':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
+            prescriptions = Prescription.objects.filter(doctorId__id=userid).filter(
                 createTime__range=(date_from, date_to)).order_by(
                 'treatment')
             results = analyse_words(prescriptions, 'prescription', 'treatment')
@@ -1225,9 +1225,14 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'sex':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
-                createTime__range=(date_from, date_to)).order_by(
-                'sex')
+            if doctorid == '0':
+                prescriptions = Prescription.objects.filter(doctorId__clinicId__id=userid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'sex')
+            else:
+                prescriptions = Prescription.objects.filter(doctorId__id=doctorid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'sex')
             if prescriptions:
                 sextype = []
                 frequency = []
@@ -1252,9 +1257,14 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'age':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
-                createTime__range=(date_from, date_to)).order_by(
-                'age')
+            if doctorid:
+                prescriptions = Prescription.objects.filter(doctorId__clinicId__id=userid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'age')
+            else:
+                prescriptions = Prescription.objects.filter(doctorId__id=doctorid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'age')
             if prescriptions:
                 agefloor = math.floor(int(prescriptions[0].age))
                 ages = []
@@ -1277,9 +1287,14 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'feature':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
-                createTime__range=(date_from, date_to)).order_by(
-                'feature')
+            if doctorid == '0':
+                prescriptions = Prescription.objects.filter(doctorId__clinicId__id=userid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'feature')
+            else:
+                prescriptions = Prescription.objects.filter(doctorId__id=doctorid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'feature')
             results = analyse_words(prescriptions, 'prescription', 'feature')
             frequency = []
             feature = []
@@ -1293,9 +1308,14 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'diagnosis':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
-                createTime__range=(date_from, date_to)).order_by(
-                'diagnosis')
+            if doctorid == '0':
+                prescriptions = Prescription.objects.filter(doctorId__clinicId__id=userid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'diagnosis')
+            else:
+                prescriptions = Prescription.objects.filter(doctorId__id=doctorid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'diagnosis')
             results = analyse_words(prescriptions, 'prescription', 'diagnosis')
             frequency = []
             diagnosis = []
@@ -1309,9 +1329,14 @@ def date_type_statistic_method(date, userid, operatortype, statistictype):
         if statistictype == 'treatment':
             date_from = datetime.datetime(date[0][0], date[0][1], date[0][2], 0, 0)
             date_to = datetime.datetime(date[1][0], date[1][1], date[1][2] + 1, 0, 0)
-            prescriptions = Prescription.objects.filter(doctorId=userid).filter(
-                createTime__range=(date_from, date_to)).order_by(
-                'treatment')
+            if doctorid == '0':
+                prescriptions = Prescription.objects.filter(doctorId__clinicId__id=userid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'treatment')
+            else:
+                prescriptions = Prescription.objects.filter(doctorId__id=doctorid).filter(
+                    createTime__range=(date_from, date_to)).order_by(
+                    'treatment')
             results = analyse_words(prescriptions, 'prescription', 'treatment')
             frequency = []
             treatment = []
